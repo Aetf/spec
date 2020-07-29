@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+# Enable iommu in kernel
+intel_iommu=on
+iommu=pt
+
+# bind vfio-pci to the NVIDIA 1650 GPU on host
+vfio-pci.ids=10de:1f95

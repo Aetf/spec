@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - { role: pull, tags: ["pull"] }
+    - { role: base, tags: ["base"] }
+    - { role: gui, tags: ["gui"] }
+    - { role: windows-kvm, tags: ["kvm"] }
+  tasks: []
+  vars_prompt:
+    - name: user_password
+      prompt: "Enter desired password for the new user"

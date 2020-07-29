@@ -1,0 +1,8 @@
+---
+- name: "rebuild unified kernel images"
+  command: /usr/local/bin/dracut-install-uki
+- name: "reload systemd daemon"
+  systemd:
+    daemon_reload: yes
+- name: "upgrade rEFInd on ESP"
+  command: /usr/local/bin/refind-upgrade

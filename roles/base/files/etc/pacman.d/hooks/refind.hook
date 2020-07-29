@@ -1,0 +1,12 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Package
+Target=refind-efi
+Target=refind
+Target=refind-git
+
+[Action]
+Description = Updating rEFInd on ESP
+When=PostTransaction
+Exec=/usr/local/bin/refind-upgrade

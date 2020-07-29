@@ -1,0 +1,11 @@
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info
+*.egg
+eggs/
+.eggs/
+
+# Ansible-galaxy installed dependencies
+deps/

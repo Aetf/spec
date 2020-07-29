@@ -1,0 +1,144 @@
+#!/usr/bin/env python
+"""
+Build and install unified kernel image
+"""
+from __future__ import print_function, division, absolute_import
+import glob
+import os
+import re
+import sys
+import subprocess as sp
+from contextlib import contextmanager
+
+
+ESP_MOUNTPOINT = '/efi'
+DRACUT_CONF_DIR = '/etc/dracut.conf.d'
+
+
+def get_conf_lines(base, preset):
+    for conf in glob.glob(os.path.join(DRACUT_CONF_DIR, base, '*.conf')):
+        with open(conf) as f:
+            for line in f:
+                if line.startswith('#'):
+                    continue
+                yield line.strip()
+    for conf in glob.glob(os.path.join(DRACUT_CONF_DIR, base, preset, '*.conf')):
+        with open(conf) as f:
+            for line in f:
+                if line.startswith('#'):
+                    continue
+                yield line.strip()
+
+
+def get_cmdline(preset='normal'):
+    cmdline = []
+
+    for line in get_conf_lines('cmdline.d', preset):
+        if line:
+            cmdline.append(line)
+
+    # normalize trailing/leading spaces as well as condense multiple spaces to one.
+    return ' '.join(cmdline)
+
+
+def get_install(preset='normal'):
+    files = []
+    for line in get_conf_lines('install.d', preset):
+        files += gather_files(line)
+    return files
+
+
+def gather_files(path):
+    files = []
+    if os.path.isdir(path):
+        for dirpath, dirnames, filenames in os.walk(path):
+            for dirname in dirnames:
+                files += gather_files(os.path.join(dirpath, dirname))
+            files += [os.path.join(dirpath, filename) for filename in filenames]
+    else:
+        files += [path]
+    return files
+
+
+def call_dracut(hostonly, cmdline, install_files, name_parts, kver):
+    cmd = [
+        'dracut',
+        '-H' if hostonly else '-N',
+        '--force',
+        '--kernel-cmdline', cmdline,
+    ]
+    for ifile in install_files:
+        cmd += [
+            '--install', ifile,
+        ]
+    name = '-'.join(name_parts)
+    cmd += [
+        os.path.join(ESP_MOUNTPOINT, 'EFI/Linux', 'Arch-{}.efi'.format(name)),
+        '--kver', kver,
+    ]
+    return sp.check_call(cmd)
+
+
+def gen(pkgbase_path):
+    with open(os.path.join('/', pkgbase_path)) as f:
+        pkgbase = f.read().strip()
+
+    # pkgbase_path = "usr/lib/modules/linux-x.x.x/pkgbase"
+    kver = os.path.basename(os.path.dirname(pkgbase_path))
+
+    print("==> Generating hostonly image for {} {}".format(pkgbase, kver))
+    cmdline = get_cmdline('normal')
+    print("--> Kernel command line: " + cmdline)
+    call_dracut(
+        hostonly=True,
+        cmdline=cmdline,
+        install_files=get_install('normal'),
+        name_parts=[pkgbase],
+        kver=kver,
+    )
+
+    print("==> Generating fallback image for {} {}".format(pkgbase, kver))
+    cmdline = get_cmdline('fallback')
+    print("--> Kernel command line: " + cmdline)
+    call_dracut(
+        hostonly=False,
+        cmdline=cmdline,
+        install_files=get_install('fallback'),
+        name_parts=[pkgbase, 'fallback'],
+        kver=kver,
+    )
+
+
+@contextmanager
+def mount_esp(mountpoint):
+    print("==> Mounting ESP partition at {}".format(mountpoint))
+    sp.check_call(['mount-esp', mountpoint])
+    try:
+        yield
+    finally:
+        print("==> Unmounting ESP partition at {}".format(mountpoint))
+        sp.check_call(['umount', mountpoint])
+
+
+def main():
+    with mount_esp(ESP_MOUNTPOINT):
+        try:
+            os.makedirs(os.path.join(ESP_MOUNTPOINT, 'EFI/Linux'))
+        except FileExistsError:
+            pass
+
+        if sys.stdin.isatty():
+            # generate for currently installed kernel
+            for pkgbase_path in glob.glob('/usr/lib/modules/*/pkgbase'):
+                gen(pkgbase_path)
+        else:
+            # generate for package installed kernel
+            ptn = re.compile(r'usr/lib/modules/[^/]+/pkgbase')
+            for line in sys.stdin:
+                line = line.strip()
+                if ptn.match(line):
+                    gen(line)
+
+
+if __name__ == '__main__':
+    main()

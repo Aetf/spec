@@ -1,0 +1,6 @@
+---
+- name: "Install fonts"
+  pacman:
+    name: "{{ system_fonts }}"
+    state: present
+

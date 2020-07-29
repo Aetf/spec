@@ -1,0 +1,19 @@
+# by default, only use local connection
+ansible_connection: local
+
+user:
+  name: aetf
+  uid: 1000
+  group: aetf
+  shell: /usr/bin/zsh
+  email: aetf@unlimited-code.works
+
+passwordless_sudo: []
+
+system_fonts:
+  - noto-fonts
+  - noto-fonts-cjk
+  - noto-fonts-emoji
+  - noto-fonts-extra
+  - adobe-source-code-pro-fonts
+  - ttf-hack

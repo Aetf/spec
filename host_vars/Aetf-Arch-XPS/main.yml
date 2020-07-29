@@ -1,0 +1,7 @@
+user:
+  name: aetf
+  uid: 1000
+  group: aetf
+  shell: /usr/bin/zsh
+  email: aetf@unlimited-code.works
+

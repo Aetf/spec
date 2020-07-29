@@ -1,0 +1,10 @@
+[Unit]
+Description=Monitor and reapply ansible playbook at %f
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/pathwatch "%f" make -C "%f" playbook
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

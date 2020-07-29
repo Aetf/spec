@@ -1,0 +1,8 @@
+---
+passwordless_sudo: []
+
+basic_packages:
+  - rsync
+
+system_fonts:
+  - adobe-source-code-pro-fonts

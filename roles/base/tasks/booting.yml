@@ -1,0 +1,144 @@
+---
+- name: "Install oemlogos"
+  copy:
+    src: etc/pixmaps/dell.bmp
+    dest: /etc/pixmaps/
+    mode: 0644
+  notify:
+    - upgrade rEFInd on ESP
+- name: "Install default oemlogo symlink"
+  file:
+    src: dell.bmp
+    dest: /etc/pixmaps/oemlogo.bmp
+    state: link
+  notify:
+    - upgrade rEFInd on ESP
+- name: "Install mount-esp utility"
+  copy:
+    src: usr/local/bin/mount-esp
+    dest: /usr/local/bin/
+    mode: 0755
+
+- name: "dracut for initramfs"
+  block:
+    - name: "Install dracut"
+      pacman:
+        name: dracut
+        state: present
+        extra_args: "--asdeps"
+      notify:
+        - rebuild unified kernel images
+    - name: "Install dracut pacman hooks"
+      copy:
+        src: "{{ item.path }}/{{ item.name }}"
+        dest: "/{{ item.path }}/"
+        mode: "{{ item.mode }}"
+      loop:
+        - { name: "dracut-install-uki", path: "usr/local/bin", mode: "0755" }
+        - { name: "dracut-remove-uki", path: "usr/local/bin", mode: "0755" }
+        - { name: "60-dracut-remove-uki.hook", path: "etc/pacman.d/hooks", mode: "0644" }
+        - { name: "90-dracut-install-uki.hook", path: "etc/pacman.d/hooks", mode: "0644" }
+      notify:
+        - rebuild unified kernel images
+      tags:
+        - debug
+    - name: "Create dracut config directories"
+      file:
+        path: "/etc/dracut.conf.d/{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+      with_filetree: ../templates/etc/dracut.conf.d/
+      when: item.state == 'directory'
+    - name: "Template dracut configs"
+      template:
+        src: "{{ item.src }}"
+        dest: "/etc/dracut.conf.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+        mode: "{{ item.mode }}"
+      with_filetree: ../templates/etc/dracut.conf.d/
+      when: item.state == 'file'
+      notify:
+        - rebuild unified kernel images
+    - name: "Uninstall mkinitcpio"
+      pacman:
+        name: mkinitcpio
+        state: absent
+        extra_args: "--recursive"
+
+- name: "rEFInd for the boot loader"
+  block:
+    - name: "Install rEFInd"
+      aur:
+        name: refind-git
+        state: present
+      notify:
+        - upgrade rEFInd on ESP
+    - name: "Install rEFInd pacman hooks"
+      copy:
+        src: "{{ item.path }}/{{ item.name }}"
+        dest: "/{{ item.path }}/"
+        mode: "{{ item.mode }}"
+      loop:
+        - { name: "refind-upgrade", path: "usr/local/bin/", mode: "0755" }
+        - { name: "refind.hook", path: "etc/pacman.d/hooks/", mode: "0644" }
+      notify:
+        - upgrade rEFInd on ESP
+    - name: "Create rEFInd config directories"
+      file:
+        path: "/etc/refind.d/{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+      with_filetree: ../templates/etc/refind.d/
+      when: item.state == 'directory'
+      notify:
+        - upgrade rEFInd on ESP
+    - name: "Template rEFInd configs"
+      template:
+        src: "{{ item.src }}"
+        dest: "/etc/refind.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+        mode: "{{ item.mode }}"
+      with_filetree: ../templates/etc/refind.d/
+      when: item.state == 'file'
+      notify:
+        - upgrade rEFInd on ESP
+    - name: "Install link to oemlogo.bmp to rEFInd overlay"
+      file:
+        src: /etc/pixmaps/oemlogo.bmp
+        dest: /etc/refind.d/overlay/oemlogo.bmp
+        state: link
+
+- set_fact:
+    with_plymouth: false
+- name: "plymouth for smooth booting"
+  block:
+    - name: "Install plymouth"
+      aur:
+        name: plymouth-git
+        state: present
+      notify:
+        - rebuild unified kernel images
+    - name: "Install plymouth theme"
+      synchronize:
+        src: "usr/share/plymouth/themes/oemlogo"
+        dest: "/usr/share/plymouth/themes/"
+        delete: yes
+      notify:
+        - rebuild unified kernel images
+    - name: "Update plymouth configurations"
+      template:
+        src: etc/plymouth/plymouthd.conf.j2
+        dest: /etc/plymouth/plymouthd.conf
+        mode: 0644
+      notify:
+        - rebuild unified kernel images
+    - set_fact:
+        with_plymouth: true
+  tags:
+    - plymouth
+
+# TODO: ulimit, sysctl adjustments, driver modules, swapness
+- name: "Adjust various parameters applied during the booting process"
+  ping:
+
+# TODO: make sure hibernation works
+- name: "Setup hibernation"
+  ping:
