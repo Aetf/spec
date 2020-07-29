@@ -5,11 +5,7 @@ import logging
 import sys
 import subprocess as sp
 
-from watchgod import awatch, DefaultWatcher
-
-
-def worker():
-    pass
+from watchgod import awatch
 
 
 async def start_command(args):
@@ -35,7 +31,7 @@ async def main():
         proc_done =  asyncio.create_task(proc.wait()) if proc is not None else None
         to_wait = { next_change, proc_done } if proc_done is not None else { next_change }
 
-        done, pending = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
+        done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
         try:
             if next_change in done:
                 pending_changes |= next_change.result()
@@ -62,4 +58,3 @@ async def main():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-
