@@ -3,6 +3,7 @@
 Build and install unified kernel image
 """
 from __future__ import print_function, division, absolute_import
+import argparse
 import glob
 import os
 import re
@@ -120,24 +121,35 @@ def mount_esp(mountpoint):
         sp.check_call(['umount', mountpoint])
 
 
+def gather_pkgbase_lines(args):
+    """Gather pkgbase file lines either from stdin or using current install kernel"""
+    if args.hook:
+        # generate for package installed kernel
+        ptn = re.compile(r'usr/lib/modules/[^/]+/pkgbase')
+        for line in sys.stdin:
+            line = line.strip()
+            if ptn.match(line):
+                yield line
+    else:
+        # generate for currently installed kernel
+        for pkgbase_path in glob.glob('/usr/lib/modules/*/pkgbase'):
+            yield pkgbase_path
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hook', action='store_true',
+                        help='Run as packman hook, receiving changed files via stdin')
+    args = parser.parse_args()
+
     with mount_esp(ESP_MOUNTPOINT):
         try:
             os.makedirs(os.path.join(ESP_MOUNTPOINT, 'EFI/Linux'))
         except FileExistsError:
             pass
 
-        if sys.stdin.isatty():
-            # generate for currently installed kernel
-            for pkgbase_path in glob.glob('/usr/lib/modules/*/pkgbase'):
-                gen(pkgbase_path)
-        else:
-            # generate for package installed kernel
-            ptn = re.compile(r'usr/lib/modules/[^/]+/pkgbase')
-            for line in sys.stdin:
-                line = line.strip()
-                if ptn.match(line):
-                    gen(line)
+        for line in gather_pkgbase_lines(args):
+            gen(line)
 
 
 if __name__ == '__main__':
