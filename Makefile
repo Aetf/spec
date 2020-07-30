@@ -1,7 +1,7 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 test: site.yml deps/.dirstamp
-	ansible-playbook $< --skip-tags pull
+	ansible-playbook $< --skip-tags start_pulling
 
 playbook: site.yml deps/.dirstamp
 	systemd-inhibit --who="Ansible Playbook" --why="Updating system configuration" ansible-playbook $<

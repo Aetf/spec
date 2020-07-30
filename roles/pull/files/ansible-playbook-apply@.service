@@ -6,5 +6,8 @@ Type=exec
 ExecStart=/usr/local/bin/pathwatch "%f" make -C "%f" playbook
 Restart=always
 
+Environment=ANSIBLE_INVENTORY_CACHE_CONNECTION=/var/cache/ansible/inventory
+Environment=ANSIBLE_CACHE_PLUGIN_CONNECTION=/var/cache/ansible/facts
+
 [Install]
 WantedBy=multi-user.target

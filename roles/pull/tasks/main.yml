@@ -23,6 +23,8 @@
     daemon_reload: yes
     enabled: yes
     state: started
+  tags:
+    - start_pulling
 
 # TODO
 - name: "Enable regularly pull of dotfiles"
