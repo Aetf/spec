@@ -61,7 +61,7 @@ def gather_files(path):
     return files
 
 
-def call_dracut(hostonly, cmdline, install_files, name_parts, kver, *args):
+def call_dracut(*args, hostonly, cmdline, install_files, name_parts, kver):
     cmd = [
         'dracut',
         '-H' if hostonly else '-N',
@@ -92,6 +92,7 @@ def gen(pkgbase_path, args):
     cmdline = get_cmdline('normal')
     print("--> Kernel command line: " + cmdline)
     call_dracut(
+        *args.dracut_args,
         hostonly=True,
         cmdline=cmdline,
         install_files=get_install('normal'),
@@ -103,12 +104,12 @@ def gen(pkgbase_path, args):
     cmdline = get_cmdline('fallback')
     print("--> Kernel command line: " + cmdline)
     call_dracut(
+        *args.dracut_args,
         hostonly=False,
         cmdline=cmdline,
         install_files=get_install('fallback'),
         name_parts=[pkgbase, 'fallback'],
         kver=kver,
-        *args.dracut_args,
     )
 
 
@@ -145,6 +146,7 @@ def main():
     parser.add_argument('dracut_args', metavar='DRACUT_ARGS', nargs=argparse.REMAINDER,
                         help='Additional arguments to pass to dracut')
     args = parser.parse_args()
+    args.dracut_args = [arg for arg in args.dracut_args if arg != '--']
 
     with mount_esp(ESP_MOUNTPOINT):
         try:
