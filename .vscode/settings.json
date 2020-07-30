@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "**/*.yml": "ansible"
-    }
+    },
+    "python.formatting.provider": "yapf"
     
 }

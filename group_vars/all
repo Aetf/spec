@@ -1,6 +1,3 @@
-# by default, only use local connection
-ansible_connection: local
-
 user:
   name: aetf
   uid: 1000
