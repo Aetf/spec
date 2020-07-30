@@ -61,7 +61,7 @@ def gather_files(path):
     return files
 
 
-def call_dracut(hostonly, cmdline, install_files, name_parts, kver):
+def call_dracut(hostonly, cmdline, install_files, name_parts, kver, *args):
     cmd = [
         'dracut',
         '-H' if hostonly else '-N',
@@ -77,10 +77,11 @@ def call_dracut(hostonly, cmdline, install_files, name_parts, kver):
         os.path.join(ESP_MOUNTPOINT, 'EFI/Linux', 'Arch-{}.efi'.format(name)),
         '--kver', kver,
     ]
+    cmd += args
     return sp.check_call(cmd)
 
 
-def gen(pkgbase_path):
+def gen(pkgbase_path, args):
     with open(os.path.join('/', pkgbase_path)) as f:
         pkgbase = f.read().strip()
 
@@ -107,6 +108,7 @@ def gen(pkgbase_path):
         install_files=get_install('fallback'),
         name_parts=[pkgbase, 'fallback'],
         kver=kver,
+        *args.dracut_args,
     )
 
 
@@ -140,6 +142,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--hook', action='store_true',
                         help='Run as packman hook, receiving changed files via stdin')
+    parser.add_argument('dracut_args', metavar='DRACUT_ARGS', nargs=argparse.REMAINDER,
+                        help='Additional arguments to pass to dracut')
     args = parser.parse_args()
 
     with mount_esp(ESP_MOUNTPOINT):
@@ -149,7 +153,7 @@ def main():
             pass
 
         for line in gather_pkgbase_lines(args):
-            gen(line)
+            gen(line, args)
 
 
 if __name__ == '__main__':
