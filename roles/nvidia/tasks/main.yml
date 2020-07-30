@@ -1,0 +1,11 @@
+---
+- name: "Install nvidia driver"
+  pacman:
+    name:
+      - nvidia
+      - nvidia-settings
+- name: "Completely blacklist nouveau in initrd"
+  template:
+    src: etc/dracut.conf.d/blacklist-nouveau.conf.j2
+    dest: /etc/dracut.conf.d/blacklist-nouveau.conf
+    mode: 0644
