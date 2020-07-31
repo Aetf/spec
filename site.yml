@@ -6,7 +6,6 @@
     - { role: base, tags: ["base"] }
     - { role: gui, tags: ["gui"] }
     - { role: nvidia, tags: ["nvidia"] }
-    - { role: windows-kvm, tags: ["kvm"] }
   tasks: []
   vars_prompt:
     - name: user_password
