@@ -6,6 +6,11 @@
     - { role: base, tags: ["base"] }
     - { role: gui, tags: ["gui"] }
     - { role: nvidia, tags: ["nvidia"] }
+    - role: dotfiles
+      tags:
+        - dotfiles
+      become: yes
+      become_user: "{{ user.name }}"
   tasks: []
   vars_prompt:
     - name: user_password

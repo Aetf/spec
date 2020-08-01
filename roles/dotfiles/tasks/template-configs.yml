@@ -1,0 +1,19 @@
+---
+- name: "Create directories"
+  file:
+    path: "{{ dest_config_home }}/{{ name }}"
+    state: directory
+- name: "Create directories"
+  file:
+    path: "{{ dest_config_home }}/{{ name }}/{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  with_filetree: "../templates/{{ src_config_home }}/{{ name }}"
+  when: item.state == 'directory'
+- name: "Template {{ name }} configs"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ dest_config_home }}/{{ name }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "{{ item.mode }}"
+  with_filetree: "../templates/{{ src_config_home }}/{{ name }}"
+  when: item.state == 'file'
