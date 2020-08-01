@@ -8,5 +8,9 @@ must be disabled to not let dracut automatically
 detect kernel command line.
 
 Note that dracut-install-uki builds two version of the kernel image:
-1) a normal image that includes all /etc/cmdline.d/*.conf and /etc/cmdline.d/normal/*.conf
-2) a fallback image that includes all /etc/cmdline.d/*.conf and /etc/cmdline.d/fallback/*.conf
+1) a normal image that includes
+    - `/etc/dracut.conf.d/cmdline.d/*.conf`
+    - `/etc/dracut.conf.d/cmdline.d/normal/*.conf`
+2) a fallback image that includes
+    - `/etc/dracut.conf.d/cmdline.d/*.conf`
+    - `/etc/dracut.conf.d/cmdline.d/fallback/*.conf`
