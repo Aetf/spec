@@ -21,6 +21,9 @@ start:
 status:
 	systemctl status ansible-playbook-apply@$$(systemd-escape -p $(ROOT_DIR))
 
+disable:
+	systemctl disable --now ansible-playbook-apply@$$(systemd-escape -p $(ROOT_DIR))
+
 log:
 	journalctl -f -u ansible-playbook-apply@$$(systemd-escape -p $(ROOT_DIR))
 

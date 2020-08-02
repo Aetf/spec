@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+# {{ ansible_managed }}
+from __future__ import annotations
+
+import configparser
+import json
+import logging
+import re
+import subprocess as sp
+from pathlib import Path
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Optional, List, Dict, Any, Set, Tuple
+    Layout = List[Dict[str, Any]]
+    Layouts = Dict[str, Layout]
+
+
+def get_autologin_user() -> Optional[str]:
+    """Try read the sddm settings to get the autologin user name"""
+    # read kde-settings.conf for the autologin user name
+    try:
+        p = configparser.ConfigParser()
+        p.read('/etc/sddm.conf.d/kde_settings.conf')
+        return p['Autologin']['User']
+    except Exception:
+        return None
+
+
+def kscreen_layouts(config_root: Path) -> Layouts:
+    """Parse the kscreen layout json
+    """
+    layouts = {}
+    for filepath in config_root.iterdir():
+        if not filepath.is_file():
+            continue
+        with filepath.open() as f:
+            layouts[filepath.name] = json.load(f)
+    return layouts
+
+
+def match_layout(layouts: Layouts, monitors: Set[str]) -> Tuple[Optional[str], Optional[Layout]]:
+    """Find a layout from layouts that contains exactly monitors
+    """
+    for lid, layout in layouts.items():
+        if len(layout) != len(monitors):
+            continue
+        try:
+            lnames = set(d['metadata']['name'] for d in layout)
+        except KeyError:
+            continue
+
+        logging.debug('Matching layout (%s) to %s', lnames, monitors)
+        if lnames == monitors:
+            return lid, layout
+    return None, None
+
+
+def apply_layout(layout: Layout):
+    cmd = ['xrandr']
+    for mon in layout:
+        cmd += [
+            '--output', mon['metadata']['name'],
+        ]
+        if not mon['enabled']:
+            cmd += ['--off']
+        else:
+            w = mon['mode']['size']['width']
+            h = mon['mode']['size']['height']
+            x = mon['pos']['x']
+            y = mon['pos']['y']
+            cmd += [
+                '--mode', f'{w}x{h}',
+                '--pos', f'{x}x{y}',
+            ]
+            if mon['primary']:
+                cmd += ['--primary']
+    sp.check_call(cmd)
+    # print(cmd)
+
+
+def main():
+    """Read the sddm's autologin user, and apply its kscreen settings for sddm
+    """
+    logging.basicConfig(level=logging.INFO)
+
+    user = get_autologin_user()
+    if user is None:
+        logging.warning('SDDM auto login user not found, exit')
+        return
+    
+    logging.info('Found SDDM auto login user: %s', user)
+
+    # this is all possible layouts
+    layouts = kscreen_layouts(Path(f'~{user}/.local/share/kscreen').expanduser())
+    logging.info('Found %d kscreen layouts', len(layouts))
+
+    # check what we current have
+    monitors = set()
+    mon_ptn = re.compile(r'^(?P<name>\S+) connected')
+    for line in sp.check_output(['xrandr'], universal_newlines=True).splitlines():
+        logging.debug('xrandr line: %s', line.rstrip())
+        m = mon_ptn.search(line)
+        if m is None:
+            continue
+        name = m.group('name')
+        monitors.add(name)
+    logging.info('Currently connected monitors: %s', monitors)
+
+    # see which layout we should apply
+    lid, layout = match_layout(layouts, monitors)
+
+    # apply what we got
+    if layout is not None:
+        logging.info('Applying layout: %s', lid)
+        apply_layout(layout)
+    else:
+        logging.warning('No matching layout found')
+
+
+if __name__ == '__main__':
+    main()

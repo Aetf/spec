@@ -10,12 +10,15 @@
       - kde-gtk-config
       - kdeconnect
 - name: "Configure SDDM"
-  synchronize:
-    src: etc/sddm.conf.d
-    dest: /etc
-- name: "Debug"
-  debug:
-    msg: "{{ ansible_run_tags }}"
+  block:
+    - template:
+        src: "{{ item.src }}"
+        dest: "/etc/sddm.conf.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+      with_filetree: ../templates/etc/sddm.conf.d/
+    - copy:
+        src: usr/local/bin/apply-user-monitor-layout
+        dest: /usr/local/bin/
+        mode: 755
 - name: "Enable SDDM service"
   service:
     name: sddm

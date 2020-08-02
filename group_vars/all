@@ -17,3 +17,8 @@ system_fonts:
   - noto-fonts-extra
   - adobe-source-code-pro-fonts
   - ttf-hack
+
+basic_packages:
+  - rsync
+  - fd
+  - ripgrep
