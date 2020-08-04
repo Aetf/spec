@@ -1,0 +1,14 @@
+---
+- name: "Install input method"
+  pacman:
+    name:
+      - fcitx5-im
+      - fcitx5-chinese-addons
+      - fcitx5-pinyin-zhwiki
+      - fcitx5-material-color
+- name: "Set environment variables"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: "home/config/zsh/env.d"
+    dest_config_home: "~{{ user.name }}/.config/zsh/env.d"
