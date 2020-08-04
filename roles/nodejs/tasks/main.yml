@@ -1,0 +1,12 @@
+---
+- name: "Install nvm"
+  aur:
+    name: nvm
+    state: present
+- name: "Template nvm configures"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: home/config/zsh/env.d
+    dest_config_home: "~{{ user.name }}/.config/zsh/env.d"
+
