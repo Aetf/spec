@@ -1,0 +1,19 @@
+---
+- name: "Ensure directory for {{ dest_config_home }}"
+  file:
+    path: "{{ dest_config_home }}"
+    state: directory
+- name: "Ensure directory structure under {{ dest_config_home }}"
+  file:
+    path: "{{ dest_config_home }}/{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  with_filetree: "{{ ansible_parent_role_paths[0] }}/templates/{{ src_config_home }}"
+  when: item.state == 'directory'
+- name: "Template configs under {{ dest_config_home }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ dest_config_home }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "{{ item.mode }}"
+  with_filetree: "{{ ansible_parent_role_paths[0] }}/templates/{{ src_config_home }}"
+  when: item.state == 'file'
