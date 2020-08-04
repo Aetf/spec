@@ -1,0 +1,16 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+# Detect extra installations in tools
+local auto_detect=true
+if $auto_detect; then
+    for pkg in $TOOL_DIR/*(FN); do
+        case $pkg in
+            *.skip)
+                continue;;
+            *miniconda*)
+                continue;;
+        esac
+        autodetect_path "$pkg"
+    done
+fi
