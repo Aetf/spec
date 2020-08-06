@@ -1,4 +1,9 @@
 ---
+- name: "Install cjk fonts"
+  pacman:
+    name:
+      - noto-fonts-cjk
+    state: present
 - name: "Install input method"
   pacman:
     name:
@@ -6,6 +11,7 @@
       - fcitx5-chinese-addons
       - fcitx5-pinyin-zhwiki
       - fcitx5-material-color
+    state: present
 - name: "Set environment variables"
   include_role:
     name: template-install

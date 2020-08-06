@@ -3,12 +3,15 @@
   pacman:
     name:
       - noto-fonts
+      - noto-fonts-extra
+      - noto-fonts-emoji
       - plasma-meta
       - plasma-wayland-session
       - powerdevil
       - bluedevil
       - kde-gtk-config
       - kdeconnect
+    state: present
 - name: "Configure SDDM"
   block:
     - template:
@@ -31,3 +34,8 @@
   when: "with_plymouth"
   tags:
     - plymouth
+- name: "Install utility tools"
+  pacman:
+    name:
+      - xsel
+    state: present
