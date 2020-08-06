@@ -39,3 +39,16 @@
     name:
       - xsel
     state: present
+- name: "Install applications"
+  aur:
+    name:
+      - qview
+      - partitionmanager
+      - dolphin
+      - okular
+    state: present
+- name: "Install application optional dependencies"
+  pacman:
+    name:
+      - exfatprogs
+    extra_args: --asdeps

@@ -22,3 +22,4 @@ basic_packages:
   - rsync
   - fd
   - ripgrep
+  - linux-headers
