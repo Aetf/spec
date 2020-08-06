@@ -1,0 +1,88 @@
+# {{ ansible_managed }}
+
+Host mcsh
+    User root
+    HostName mcsh.unlimited-code.works
+    Port 8020
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host github
+    User git
+    HostName github.com
+    ForwardX11 no
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host archvps
+    User aetf
+    HostName archvps.hosts.unlimited-code.works
+    Port 59901
+    ForwardX11 no
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host conflux
+    User peifeng
+    HostName conflux-login1.arc-ts.umich.edu
+    ForwardX11 yes
+    ForwardX11Trusted yes
+    ForwardAgent yes
+    GSSAPIAuthentication yes
+    GSSAPIDelegateCredentials yes
+    LocalForward 9999 localhost:8888
+    LocalForward 9013 localhost:9013
+    LocalForward 9014 localhost:9014
+    LocalForward 9015 localhost:9015
+    LocalForward 9016 localhost:9016
+    LocalForward 9017 localhost:9017
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host login.engin.umich.edu
+    User peifeng
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host abacus
+    User peifeng
+    HostName abacus.eecs.umich.edu
+    Port 39901
+    ForwardX11 yes
+    ForwardX11Trusted yes
+    ForwardAgent yes
+    LocalForward 8080 localhost:8080
+    LocalForward 8000 localhost:8000
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Host clnode???
+    HostName %h.clemson.cloudlab.us
+Host node-?
+    HostName %h.scaleml.gaia-pg0.wisc.cloudlab.us
+Match final host *.cloudlab.us
+    User peifeng
+    StrictHostKeyChecking no
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
+Match user cc
+    HostName 192.5.87.%h
+Match final host 192.5.87.*
+    User cc
+    UserKnownHostsFile /dev/null
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+    StrictHostKeyChecking no

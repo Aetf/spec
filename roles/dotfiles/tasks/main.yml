@@ -45,5 +45,11 @@
   include_tasks: template-configs.yml
   vars:
     name: python_keyring
-    src_config_home: local/share
-    dest_config_home: "~{{ user.name }}/.local/share"
+    src_config_home: home/config
+    dest_config_home: "{{ xdg_config_home }}"
+- name: "Install ssh configs"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: home/ssh
+    dest_config_home: "~{{ user.name }}/.ssh"
