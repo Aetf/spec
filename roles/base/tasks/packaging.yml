@@ -21,3 +21,21 @@
     state: present
   become: yes
   become_user: aur_builder
+- name: "Enable pacman to also look for packages in user home"
+  lineinfile:
+    path: /etc/pacman.conf
+    backrefs: yes
+    regexp: "^#CacheDir(.+)$"
+    line: "CacheDir\\1 /home/{{ user.name }}/.cache/packages"
+    state: present
+- name: "Enable fancier output for pacman"
+  lineinfile:
+    path: /etc/pacman.conf
+    backrefs: yes
+    regexp: "^#{{ item }}"
+    line: "{{ item }}"
+    state: present
+  loop:
+    - "Color"
+    - "TotalDownload"
+    - "VerbosePkgLists"
