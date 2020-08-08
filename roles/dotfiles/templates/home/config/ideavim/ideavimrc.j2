@@ -1,0 +1,49 @@
+" {{ ansible_managed }}
+
+set history=700
+
+set smartcase
+set incsearch
+set novisualbell
+
+" Treat long lines as break lines
+map j gj
+map k gk
+
+" Show partial command in status line
+set showcmd
+
+"""""""""""""""""""""""""""""""""""
+" Some key mappings
+"""""""""""""""""""""""""""""""""""
+" Change leader key to match vim, must be before easymotion
+let mapleader="\"
+
+" Remap VIM 0 to first non-blank char
+map 0 ^
+
+" Move a line of text using ALT+[jk]
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+" Use idea to perform smart line join
+set ideajoin
+
+"""""""""""""""""""""""""""""""""""
+" IdeaVIM emulated plugins
+"""""""""""""""""""""""""""""""""""
+" easymotion
+set easymotion
+
+set multiple-cursors
+
+set textobj-entire
+
+" vim-surround
+set surround
+
+" vim-highlightedyank
+set highlightedyank
+
