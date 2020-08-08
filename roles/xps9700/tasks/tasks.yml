@@ -1,0 +1,16 @@
+---
+- name: "Install fprint-tod"
+  aur:
+    name: libfprint-tod-git
+    extra_args: --asdeps
+    state: present
+- name: "Install xps fprint binary driver"
+  aur:
+    name: libfprint-2-tod1-xps9300-bin
+    state: present
+- name: "Install fprintd DBUS service"
+  pacman:
+    name: fprintd
+    state: present
+
+# TODO: howdy
