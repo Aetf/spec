@@ -23,3 +23,5 @@ basic_packages:
   - fd
   - ripgrep
   - linux-headers
+  - cmake
+  - gdb
