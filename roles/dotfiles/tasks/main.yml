@@ -22,3 +22,14 @@
     - file:
         path: "~{{ user.name }}/.ssh/masters"
         state: directory
+
+- name: "Enable per-user tmpfiles service"
+  systemd:
+    scope: user
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+    no_block: yes
+  loop:
+    - systemd-tmpfiles-setup.service
+    - systemd-tmpfiles-clean.timer

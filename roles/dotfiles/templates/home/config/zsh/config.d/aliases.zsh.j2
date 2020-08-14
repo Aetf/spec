@@ -8,14 +8,17 @@ alias la='ls -a'
 alias lla='ls -al'
 alias bd=". bd -si"
 alias kfg="kill -- -\$(jobs -p); fg"
+alias ps='ps xawf -eo pid,user,args'
+alias rm='rm -I --preserve-root'
+alias work='cd /dev/shm/@= user.name =@/workspace'
 function cdmk() {
     mkdir -p "$@"
     cd $1
 }
 function htop() {
-    local htoprc=$HOME/.config/htop/htoprc.low
+    local htoprc=$XDG_CONFIG_HOME/htop/htoprc.low
     if [[ $(tput lines) -gt 50 ]]; then
-        htoprc=$HOME/.config/htop/htoprc.high
+        htoprc=$XDG_CONFIG_HOME/htop/htoprc.high
     fi
     env TERM=screen HTOPRC=$htoprc htop "$@"
 }
