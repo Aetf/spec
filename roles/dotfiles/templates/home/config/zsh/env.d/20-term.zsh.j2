@@ -1,0 +1,10 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+# Fix TERM
+if [[ $TERM == "konsole" ]]; then
+    export TERM=konsole-256color
+fi
+if [[ $TERM == "tmux" ]]; then
+    export TERM=tmux-256color
+fi

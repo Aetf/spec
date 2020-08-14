@@ -1,0 +1,40 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+# Package specific variables
+## Blas
+export OPENBLAS=/gpfs/gpfs0/software/rhel72/packages/openblas/0.2.19/gcc-5.4.0/lib/libopenblas.so
+export BLAS=/gpfs/gpfs0/software/rhel72/packages/lapack/3.6.1/gcc-5.4.0/lib/libblas.so
+export LAPACK=/gpfs/gpfs0/software/rhel72/packages/lapack/3.6.1/gcc-5.4.0/lib/liblapack.so
+
+## CUDA
+CUDA_HOME=/gpfs/gpfs0/software/rhel72/packages/cuda/8.0
+if [[ -d $CUDA_HOME ]]; then
+    export CUDA_HOME
+    export CUDA_ROOT=$CUDA_HOME
+    autodetect_path "$CUDA_HOME"
+fi
+
+## Java language
+if [[ -d $TOOL_DIR/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.ppc64le ]]; then
+    export JAVA_HOME=$TOOL_DIR/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.ppc64le
+fi
+
+## C++ (Use gcc 8.2.0)
+GCC_ROOT=/gpfs/gpfs0/software/rhel72/packages/gcc/8.2.0
+if [[ -d $GCC_ROOT ]]; then
+    export GCC_ROOT
+    export GCC_LIB=$GCC_ROOT/lib64
+    export GCC_INCLUDE=$GCC_ROOT/include
+    export C_INCLUDEPATH=$GCC_ROOT/include
+
+    # LD_RUN_PATH has no special treatment
+    export LD_RUN_PATH=$GCC_ROOT/lib64:$LD_RUN_PATH
+
+    uprepend path $GCC_ROOT/bin
+
+    uprepend manpath $GCC_ROOT/share/man
+    uprepend ld_library_path $GCC_ROOT/lib64
+    uprepend cpath $GCC_ROOT/lib/gcc/powerpc64le-unknown-linux-gnu/8.2.0/include
+    uprepend cpath $GCC_ROOT/lib/gcc/powerpc64le-unknown-linux-gnu/8.2.0/include-fixed
+fi

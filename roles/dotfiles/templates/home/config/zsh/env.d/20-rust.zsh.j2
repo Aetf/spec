@@ -1,0 +1,7 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+# Rust language
+if [ -d $HOME/.cargo/bin ]; then
+    uappend path $HOME/.cargo/bin
+fi

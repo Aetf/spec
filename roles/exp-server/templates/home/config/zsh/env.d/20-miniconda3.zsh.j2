@@ -1,0 +1,7 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+# Python language
+if [ -d $TOOL_DIR/miniconda3/bin ]; then
+    uprepend path $TOOL_DIR/miniconda3/bin
+fi
