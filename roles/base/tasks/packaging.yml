@@ -25,17 +25,41 @@
   lineinfile:
     path: /etc/pacman.conf
     backrefs: yes
-    regexp: "^#CacheDir(.+)$"
+    regexp: "^CacheDir(.+)$"
+    insertafter: "^#CacheDir"
     line: "CacheDir\\1 /home/{{ user.name }}/.cache/packages"
     state: present
 - name: "Enable fancier output for pacman"
   lineinfile:
     path: /etc/pacman.conf
     backrefs: yes
-    regexp: "^#{{ item }}"
+    regexp: "^{{ item }}"
+    insertafter: "^#{{ item }}"
     line: "{{ item }}"
     state: present
   loop:
     - "Color"
     - "TotalDownload"
     - "VerbosePkgLists"
+
+- name: "Enable parallel build for makepkg"
+  lineinfile:
+    path: /etc/makepkg.conf
+    regexp: "^MAKEFLAGS"
+    insertafter: "^#MAKEFLAGS"
+    line: 'MAKEFLAGS="-j"'
+    state: present
+- name: "Use in memory build dir for makepkg"
+  lineinfile:
+    path: /etc/makepkg.conf
+    regexp: "^BUILDDIR"
+    insertafter: "^#BUILDDIR"
+    line: 'BUILDDIR=/tmp/makepkg'
+    state: present
+- name: "Set packager for makepkg"
+  lineinfile:
+    path: /etc/makepkg.conf
+    regexp: "^PACKAGER"
+    insertafter: "^#PACKAGER"
+    line: 'PACKAGER=Aetf <aetf@unlimited-code.works>'
+    state: present
