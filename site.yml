@@ -5,7 +5,7 @@
     - { role: pull, tags: ["pull"] }
     - { role: base, tags: ["base"] }
     - { role: gui, tags: ["gui"] }
-    - { role: nvidia, tags: ["nvidia"] }
+    - { role: nvidia, tags: ["nvidia", "drivers"] }
     - { role: latex, tags: ["latex"] }
     - role: dotfiles
       tags:
@@ -23,3 +23,14 @@
   vars_prompt:
     - name: user_password
       prompt: "Enter desired password for the new user"
+
+- hosts: laptop
+  become: yes
+  roles:
+    - { role: tzupdate, tags: ["tzupdate"] }
+  tasks: []
+
+- hosts: xps9700
+  roles:
+    - { role: xps9700, tags: ["drivers"] }
+  tasks: []
