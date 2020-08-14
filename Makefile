@@ -4,7 +4,7 @@ test: site.yml deps/.dirstamp
 	ansible-playbook $< --skip-tags start_pulling -vvv
 
 diff: site.yml deps/.dirstamp
-	ansible-playbook $< --skip-tags start_pulling --check --diff -vvv
+	ansible-playbook $< --skip-tags start_pulling --check --diff
 
 playbook: site.yml deps/.dirstamp
 	systemd-inhibit \

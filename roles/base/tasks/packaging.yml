@@ -61,5 +61,5 @@
     path: /etc/makepkg.conf
     regexp: "^PACKAGER"
     insertafter: "^#PACKAGER"
-    line: 'PACKAGER=Aetf <aetf@unlimited-code.works>'
+    line: 'PACKAGER="Aetf <aetf@unlimited-code.works>"'
     state: present
