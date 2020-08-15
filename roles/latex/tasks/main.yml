@@ -1,12 +1,5 @@
 ---
-- name: "Install texlive"
-  pacman:
-    name:
-      - texlive-most
-    state: present
-- name: "Install texlive optional dependencies"
-  pacman:
-    name:
-      - biber
-    state: present
-    extra_args: --asdeps
+# We want this role to run as root by default
+- import_tasks: tasks.yml
+  become: yes
+  become_user: root

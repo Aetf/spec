@@ -1,31 +1,5 @@
 ---
-- name: "Install cjk fonts"
-  pacman:
-    name:
-      - noto-fonts-cjk
-    state: present
-- name: "Install input method"
-  pacman:
-    name:
-      - fcitx5-im
-      - fcitx5-chinese-addons
-      - fcitx5-pinyin-zhwiki
-      - fcitx5-material-color
-    state: present
-- name: "Set environment variables"
-  include_role:
-    name: template-install
-  vars:
-    src_config_home: "home/config/zsh/env.d"
-    dest_config_home: "~{{ user.name }}/.config/zsh/env.d"
-- name: "Configure fontconfig to use language dependent font selection"
-  file:
-    src: ../conf.avail/70-noto-cjk.conf
-    dest: /etc/fonts/conf.d/70-noto-cjk.conf
-    state: link
+# We want this role to run as root by default
+- import_tasks: tasks.yml
   become: yes
-- name: "Prefer CJK SC fonts"
-  template:
-    src: etc/fonts/conf.d/50-cjk-sc.conf.j2
-    dest: /etc/fonts/conf.d/50-cjk-sc.conf
-  become: yes
+  become_user: root

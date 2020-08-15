@@ -1,9 +1,5 @@
 ---
-- name: "Install tzupdate"
-  aur:
-    name: tzupdate
-    state: present
-- name: "Enable tzupdate when network is connected"
-  systemd:
-    name: tzupdate.service
-    enabled: yes
+# We want this role to run as root by default
+- import_tasks: tasks.yml
+  become: yes
+  become_user: root

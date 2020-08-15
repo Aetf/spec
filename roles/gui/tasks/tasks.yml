@@ -1,0 +1,55 @@
+---
+- name: "Install KDE plasma"
+  pacman:
+    name:
+      - noto-fonts
+      - noto-fonts-extra
+      - noto-fonts-emoji
+      - plasma-meta
+      - plasma-wayland-session
+      - powerdevil
+      - bluedevil
+      - kde-gtk-config
+      - kdeconnect
+    state: present
+- name: "Configure SDDM"
+  block:
+    - template:
+        src: "{{ item.src }}"
+        dest: "/etc/sddm.conf.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+      with_filetree: ../templates/etc/sddm.conf.d/
+    - copy:
+        src: usr/local/bin/apply-user-monitor-layout
+        dest: /usr/local/bin/
+        mode: 755
+- name: "Enable SDDM service"
+  service:
+    name: sddm
+    enabled: yes
+  when: "not with_plymouth"
+- name: "Enable SDDM service (with plymouth)"
+  service:
+    name: sddm-plymouth
+    enabled: yes
+  when: "with_plymouth"
+  tags:
+    - plymouth
+- name: "Install utility tools"
+  pacman:
+    name:
+      - xsel
+    state: present
+- name: "Install applications"
+  include_role:
+    name: aur-install
+  vars:
+    aur_packages:
+      - qview
+      - partitionmanager
+      - dolphin
+      - okular
+- name: "Install application optional dependencies"
+  pacman:
+    name:
+      - exfatprogs
+    extra_args: --asdeps

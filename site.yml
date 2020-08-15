@@ -7,25 +7,18 @@
     - { role: gui, tags: ["gui"] }
     - { role: nvidia, tags: ["nvidia", "drivers"] }
     - { role: latex, tags: ["latex"] }
-    - role: dotfiles
-      tags:
-        - dotfiles
-      become: yes
-      become_user: "{{ user.name }}"
+    - { role: dotfiles, tags: ["dotfiles"] }
     - role: chinese
       tags:
         - dotfiles
         - input_method
         - chinese
-      become: yes
-      become_user: "{{ user.name }}"
   tasks: []
   vars_prompt:
     - name: user_password
       prompt: "Enter desired password for the new user"
 
 - hosts: laptop
-  become: yes
   roles:
     - { role: tzupdate, tags: ["tzupdate"] }
   tasks: []

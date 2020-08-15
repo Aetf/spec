@@ -1,0 +1,29 @@
+---
+- name: "Install cjk fonts"
+  pacman:
+    name:
+      - noto-fonts-cjk
+    state: present
+- name: "Install input method"
+  pacman:
+    name:
+      - fcitx5-im
+      - fcitx5-chinese-addons
+      - fcitx5-pinyin-zhwiki
+      - fcitx5-material-color
+    state: present
+- name: "Set environment variables"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: "etc/profile.d"
+    dest_config_home: "/etc/profile.d"
+- name: "Configure fontconfig to use language dependent font selection"
+  file:
+    src: ../conf.avail/70-noto-cjk.conf
+    dest: /etc/fonts/conf.d/70-noto-cjk.conf
+    state: link
+- name: "Prefer CJK SC fonts"
+  template:
+    src: etc/fonts/conf.d/50-cjk-sc.conf.j2
+    dest: /etc/fonts/conf.d/50-cjk-sc.conf

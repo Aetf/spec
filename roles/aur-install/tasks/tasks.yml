@@ -1,0 +1,7 @@
+---
+- name: "Install {{ aur_packages }}"
+  aur:
+    name: "{{ aur_packages | ensure_list }}"
+    state: present
+    # always use makepkg to avoid reading user yay configs
+    use: makepkg

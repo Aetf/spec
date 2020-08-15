@@ -1,13 +1,14 @@
 ---
-- name: "Install fprint-tod"
-  aur:
-    name: libfprint-tod-git
-    extra_args: --asdeps
-    state: present
-- name: "Install xps fprint binary driver"
-  aur:
-    name: libfprint-2-tod1-xps9300-bin
-    state: present
+- name: "Install fprint-tod and xps binary driver"
+  include_role:
+    name: aur-install
+  vars:
+    aur_packages:
+      - libfprint-tod-git
+      - libfprint-2-tod1-xps9300-bin
+- name: "Mark libfprint-tod-git as deps"
+  command:
+    cmd: "pacman -D --asdeps libfprint-tod-git"
 - name: "Install fprintd DBUS service"
   pacman:
     name: fprintd

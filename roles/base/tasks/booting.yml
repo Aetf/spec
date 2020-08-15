@@ -67,11 +67,10 @@
 - name: "rEFInd for the boot loader"
   block:
     - name: "Install rEFInd"
-      aur:
-        name: refind-git
-        state: present
-      notify:
-        - upgrade rEFInd on ESP
+      include_role:
+        name: aur-install
+      vars:
+        aur_packages: refind-git
     - name: "Install rEFInd pacman hooks"
       copy:
         src: "{{ item.path }}/{{ item.name }}"
@@ -111,11 +110,10 @@
 - name: "plymouth for smooth booting"
   block:
     - name: "Install plymouth"
-      aur:
-        name: plymouth-git
-        state: present
-      notify:
-        - rebuild unified kernel images
+      include_role:
+        name: aur-install
+      vars:
+        aur_packages: plymouth-git
     - name: "Install plymouth theme"
       synchronize:
         src: "usr/share/plymouth/themes/oemlogo"

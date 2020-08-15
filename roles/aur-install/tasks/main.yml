@@ -1,0 +1,5 @@
+---
+# Make sure the task run as aur_builder, the last import_tasks takes precedence about the become_user
+- import_tasks: tasks.yml
+  become: yes
+  become_user: aur_builder

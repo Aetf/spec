@@ -1,0 +1,31 @@
+---
+- name: "Install inotify-tools for monitoring file changes"
+  pacman:
+    name:
+      - inotify-tools
+      - python-watchgod
+    state: present
+
+- name: "Install binary pathwatch"
+  copy:
+   src: "pathwatch"
+   dest: "/usr/local/bin/"
+   mode: 0755
+- name: "Install systemd service to monitor and re-apply playbook changes"
+  copy:
+    src: "ansible-playbook-apply@.service"
+    dest: "/etc/systemd/system"
+
+- name: "Enable and start the playbook monitor service"
+  systemd:
+    name: "ansible-playbook-apply@{{ playbook_dir | systemd_escape(path=True) }}.service"
+    scope: system
+    daemon_reload: yes
+    enabled: yes
+    state: started
+  tags:
+    - start_pulling
+
+# TODO
+- name: "Enable regularly pull of dotfiles"
+  ping:

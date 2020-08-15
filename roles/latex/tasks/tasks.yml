@@ -1,0 +1,12 @@
+---
+- name: "Install texlive"
+  pacman:
+    name:
+      - texlive-most
+    state: present
+- name: "Install texlive optional dependencies"
+  pacman:
+    name:
+      - biber
+    state: present
+    extra_args: --asdeps
