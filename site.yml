@@ -26,4 +26,5 @@
 - hosts: xps9700
   roles:
     - { role: xps9700, tags: ["drivers"] }
+    - { role: nodejs, tags: ["nodejs"] }
   tasks: []

@@ -1,14 +1,5 @@
 ---
-- name: "Install nvm"
-  include_role:
-    name: aur
-  vars:
-    aur_packages: nvm
-- name: "Template nvm configures"
-  include_role:
-    name: template-install
-  vars:
-    src_config_home: home/config/zsh/env.d
-    dest_config_home: "~{{ user.name }}/.config/zsh/env.d"
+# We want this role to run as user by default
+- import_tasks: tasks.yml
   become: yes
   become_user: "{{ user.name }}"
