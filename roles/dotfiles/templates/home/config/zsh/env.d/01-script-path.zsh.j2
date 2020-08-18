@@ -2,6 +2,6 @@
 # @= ansible_managed =@
 
 # Append scripts folder to path
-if [ -d @= role_path =@/files/scripts ]; then
-    uappend path "@= role_path =@/files/scripts"
+if [ -d @= playbook_dir =@/roles/dotfiles/files/scripts ]; then
+    uappend path "@= playbook_dir =@/roles/dotfiles/files/scripts"
 fi
