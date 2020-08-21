@@ -14,6 +14,6 @@ while [ -s "$NVM_DIR/alias/$DEFAULT_NODE_VER" ]; do
   DEFAULT_NODE_VER="$(<$NVM_DIR/alias/$DEFAULT_NODE_VER)"
 done;
 
-uappend path "$NVM_DIR/versions/node/v${DEFAULT_NODE_VER#v}/bin"
+uprepend path "$NVM_DIR/versions/node/v${DEFAULT_NODE_VER#v}/bin"
 # alias `nvm` to this one liner lazy load of the normal nvm script
 alias nvm="unalias nvm; [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"; nvm $@"
