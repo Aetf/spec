@@ -25,3 +25,5 @@ basic_packages:
   - linux-headers
   - cmake
   - gdb
+  # for automatically extract archive files
+  - atool
