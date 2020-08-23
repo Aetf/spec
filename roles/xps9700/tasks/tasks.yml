@@ -30,11 +30,19 @@
     # TODO: patch howdy to not print out OpenCV warnings in
     # TODO: patch howdy to not SHOUT on all tty (PR already merged, but not released)
 
+- name: "Soundwire audio driver"
+  block:
+    - name: "Install sof-firmware for audio device"
+      pacman:
+        name: sof-firmware
+        state: present
+
 - name: "Energy consumption"
   block:
-    - name: "Install tlp"
+    - name: "Install tlp and cpupower"
       pacman:
         name:
+          - cpupower
           - tlp
           - tlp-rdw
         state: present
@@ -57,3 +65,10 @@
       vars:
         src_config_home: "etc/tlp.d"
         dest_config_home: "/etc/tlp.d"
+
+- name: "Disable audit in dmesg"
+  template:
+    src: etc/dracut.conf.d/cmdline.d/disable-audit.conf.j2
+    dest: /etc/dracut.conf.d/cmdline.d/disable-audit.conf
+  notify:
+    - rebuild unified kernel images

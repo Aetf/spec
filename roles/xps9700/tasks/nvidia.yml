@@ -6,20 +6,14 @@
       - nvidia-settings
 - name: "Blacklist nouveau"
   template:
-    src: "{{ item.src }}"
-    dest: "/etc/dracut.conf.d/{{ item.path | regex_replace('\\.j2$', '') }}"
-    mode: "{{ item.mode }}"
-  with_filetree: ../templates/etc/dracut.conf.d
-  when: item.state == 'file'
+    src: etc/dracut.conf.d/blacklist-nouveau.conf.j2
+    dest: etc/dracut.conf.d/blacklist-nouveau.conf
   notify:
     - rebuild unified kernel images
 - name: "Enable nvidia native power management"
   template:
-    src: "{{ item.src }}"
-    dest: "/etc/modprobe.d/{{ item.path | regex_replace('\\.j2$', '') }}"
-    mode: "{{ item.mode }}"
-  with_filetree: ../templates/etc/modprobe.d
-  when: item.state == 'file'
+    src: etc/modprobe.d/nvidia-power.conf.j2
+    dest: etc/modprobe.d/nvidia-power.conf
   notify:
     - rebuild unified kernel images
 - name: "Nvidia power management udev rules"
