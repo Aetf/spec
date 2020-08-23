@@ -30,6 +30,10 @@ setopt HIST_VERIFY               # Don't execute immediately upon history expans
 autoload -U select-word-style
 select-word-style bash
 
+# by default: export WORDCHARS='*?_-.[]~=/&;!#$%^(){}<>'
+# we take out the slash, period, angle brackets, dash here.
+export WORDCHARS='*?_[]~=&;!#$%^(){}'
+
 # use paste escape sequence
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
