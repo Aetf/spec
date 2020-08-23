@@ -1,4 +1,7 @@
 ---
+- name: "NVIDIA GPU"
+  import_tasks: nvidia.yml
+
 - name: "Fingerprint reader"
   block:
     - name: "Install fprint-tod and xps binary driver"

@@ -1,0 +1,30 @@
+---
+- name: "Install nvidia driver"
+  pacman:
+    name:
+      - nvidia
+      - nvidia-settings
+- name: "Blacklist nouveau"
+  template:
+    src: "{{ item.src }}"
+    dest: "/etc/dracut.conf.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "{{ item.mode }}"
+  with_filetree: ../templates/etc/dracut.conf.d
+  when: item.state == 'file'
+  notify:
+    - rebuild unified kernel images
+- name: "Enable nvidia native power management"
+  template:
+    src: "{{ item.src }}"
+    dest: "/etc/modprobe.d/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "{{ item.mode }}"
+  with_filetree: ../templates/etc/modprobe.d
+  when: item.state == 'file'
+  notify:
+    - rebuild unified kernel images
+- name: "Nvidia power management udev rules"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: "etc/udev"
+    dest_config_home: "/etc/udev"

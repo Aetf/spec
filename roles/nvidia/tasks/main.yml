@@ -1,5 +1,0 @@
----
-# We want this role to run as root by default
-- import_tasks: tasks.yml
-  become: yes
-  become_user: root
