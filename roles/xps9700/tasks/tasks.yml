@@ -1,17 +1,56 @@
 ---
-- name: "Install fprint-tod and xps binary driver"
-  include_role:
-    name: aur-install
-  vars:
-    aur_packages:
-      - libfprint-tod-git
-      - libfprint-2-tod1-xps9300-bin
-- name: "Mark libfprint-tod-git as deps"
-  command:
-    cmd: "pacman -D --asdeps libfprint-tod-git"
-- name: "Install fprintd DBUS service"
-  pacman:
-    name: fprintd
-    state: present
+- name: "Fingerprint reader"
+  block:
+    - name: "Install fprint-tod and xps binary driver"
+      include_role:
+        name: aur-install
+      vars:
+        aur_packages:
+          - libfprint-tod-git
+          - libfprint-2-tod1-xps9300-bin
+    - name: "Mark libfprint-tod-git as deps"
+      command:
+        cmd: "pacman -D --asdeps libfprint-tod-git"
+    - name: "Install fprintd DBUS service"
+      pacman:
+        name: fprintd
+        state: present
+- name: "Window Hellow camera"
+  block:
+    # TODO: howdy
+    - name: "Install howdy"
+      include_role:
+        name: aur-install
+      vars:
+        aur_packages:
+          - howdy
+    # TODO: patch howdy to not print out OpenCV warnings in
+    # TODO: patch howdy to not SHOUT on all tty (PR already merged, but not released)
 
-# TODO: howdy
+- name: "Energy consumption"
+  block:
+    - name: "Install tlp"
+      pacman:
+        name:
+          - tlp
+          - tlp-rdw
+        state: present
+    - name: "Enable tlp service"
+      systemd:
+        name: tlp.service
+        enabled: yes
+        state: started
+    - name: "Mask {{ item }}"
+      systemd:
+        name: "{{ item }}"
+        masked: yes
+        state: stopped
+      loop:
+        - systemd-rfkill.socket
+        - systemd-rfkill.service
+    - name: "Create TLP configurations"
+      include_role:
+        name: template-install
+      vars:
+        src_config_home: "etc/tlp.d"
+        dest_config_home: "/etc/tlp.d"
