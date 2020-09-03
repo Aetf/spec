@@ -18,6 +18,7 @@ zstyle ":zplug:tag" depth 1
 zstyle ":zplug:tag" defer 1
 
 # Essential
+export ZPLUG_HOME=$XDG_DATA_HOME/zplug
 if [[ ! -d "$ZDOTDIR/zplug" ]]; then
     # Check if zplug is installed
     git clone https://github.com/zplug/zplug "$ZDOTDIR/zplug"
