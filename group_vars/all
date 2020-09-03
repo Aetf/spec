@@ -27,3 +27,5 @@ basic_packages:
   - gdb
   # for automatically extract archive files
   - atool
+  # for pacdiff
+  - pacman-contrib
