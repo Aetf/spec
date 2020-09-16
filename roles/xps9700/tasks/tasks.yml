@@ -28,7 +28,6 @@
         aur_packages:
           - howdy
     # TODO: patch howdy to not print out OpenCV warnings in
-    # TODO: patch howdy to not SHOUT on all tty (PR already merged, but not released)
 
 - name: "Soundwire audio driver"
   block:
