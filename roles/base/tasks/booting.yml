@@ -23,7 +23,9 @@
   block:
     - name: "Install dracut"
       pacman:
-        name: dracut
+        name:
+          - dracut
+          - pigz
         state: present
         extra_args: "--asdeps"
       notify:
