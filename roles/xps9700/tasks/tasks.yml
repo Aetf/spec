@@ -49,7 +49,7 @@
       include_role:
         name: aur-install
       vars:
-        aur-packages:
+        aur_packages:
           - plasma5-applets-plasma-pstate
       tags:
         - gui

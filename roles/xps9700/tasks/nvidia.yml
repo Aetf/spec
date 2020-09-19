@@ -4,16 +4,16 @@
     name:
       - nvidia
       - nvidia-settings
-- name: "Blacklist nouveau"
+- name: "Skip nouveau in initramfs"
   template:
     src: etc/dracut.conf.d/blacklist-nouveau.conf.j2
-    dest: etc/dracut.conf.d/blacklist-nouveau.conf
+    dest: /etc/dracut.conf.d/blacklist-nouveau.conf
   notify:
     - rebuild unified kernel images
 - name: "Enable nvidia native power management"
   template:
     src: etc/modprobe.d/nvidia-power.conf.j2
-    dest: etc/modprobe.d/nvidia-power.conf
+    dest: /etc/modprobe.d/nvidia-power.conf
   notify:
     - rebuild unified kernel images
 - name: "Nvidia power management udev rules"
