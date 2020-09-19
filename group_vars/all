@@ -22,7 +22,6 @@ basic_packages:
   - rsync
   - fd
   - ripgrep
-  - linux-headers
   - cmake
   - gdb
   # for automatically extract archive files
