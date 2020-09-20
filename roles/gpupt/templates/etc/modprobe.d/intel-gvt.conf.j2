@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+# Intel GVT-G
+options i915 enable_gvt=1
+
+# Prevent some guest OS from crash when accessing unhandled MSRs
+options kvm ignore_msrs=1

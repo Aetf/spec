@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+# this file must be named before early-kms.conf so that these
+# drivers are loaded before i915 early kms driver
+
+# include vfio drivers in initramfs and also load them early
+# they are configured in /etc/modprble.d/vfio.conf
+force_drivers+=" vfio_pci vfio vfio_iommu_type1 vfio_virqfd"
+
+# also, omit nvidia drivers
+omit_drivers+=" nvidia nvidia-drm nvidia-modeset nvidia-uvm"

@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+# enable iommu for pci passthrough
+intel_iommu=on
+# prevent linux from touching devices which cannot be passed through
+iommu=pt

@@ -1,0 +1,35 @@
+---
+- name: "Enable Linux iommu"
+  template:
+    src: etc/dracut.conf.d/cmdline.d/iommu.conf.j2
+    dest: /etc/dracut.conf.d/cmdline.d/iommu.conf
+  notify:
+    - rebuild unified kernel images
+
+# isolate the nvidia card
+- name: "Include and load vfio drivers in initramfs"
+  template:
+    src: etc/dracut.conf.d/00-add-vfio.conf.j2
+    dest: /etc/dracut.conf.d/00-add-vfio.conf
+  notify:
+    - rebuild unified kernel images
+- name: "Bind vfio driver to nvidia card"
+  template:
+    src: etc/modprobe.d/vfio.conf.j2
+    dest: /etc/modprobe.d/vfio.conf
+  notify:
+    - rebuild unified kernel images
+
+# enable intel GVT-g
+- name: "Include and load GVT-g related kernel drivers in initramfs"
+  template:
+    src: etc/dracut.conf.d/01-intel-gvt.conf.j2
+    dest: /etc/dracut.conf.d/01-intel-gvt.conf
+  notify:
+    - rebuild unified kernel images
+- name: "Enable GVT-g"
+  template:
+    src: etc/modprobe.d/intel-gvt.conf.j2
+    dest: /etc/modprobe.d/intel-gvt.conf
+  notify:
+    - rebuild unified kernel images
