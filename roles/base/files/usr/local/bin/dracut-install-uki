@@ -10,25 +10,34 @@ import re
 import sys
 import subprocess as sp
 from contextlib import contextmanager
+from itertools import chain
 
 
 ESP_MOUNTPOINT = '/efi'
 DRACUT_CONF_DIR = '/etc/dracut.conf.d'
 
 
+def msg(msg):
+    print('==> {}'.format(msg), flush=True)
+
+
+def msg2(msg):
+    print('--> {}'.format(msg), flush=True)
+
+
 def get_conf_lines(base, preset):
-    for conf in glob.glob(os.path.join(DRACUT_CONF_DIR, base, '*.conf')):
+    conf_files = chain(
+        glob.glob(os.path.join(DRACUT_CONF_DIR, base, '*.conf')),
+        glob.glob(os.path.join(DRACUT_CONF_DIR, base, preset, '*.conf')),
+    )
+    for conf in conf_files:
         with open(conf) as f:
             for line in f:
                 if line.startswith('#'):
                     continue
-                yield line.strip()
-    for conf in glob.glob(os.path.join(DRACUT_CONF_DIR, base, preset, '*.conf')):
-        with open(conf) as f:
-            for line in f:
-                if line.startswith('#'):
-                    continue
-                yield line.strip()
+                line = line.strip()
+                if line:
+                    yield line
 
 
 def get_cmdline(preset='normal'):
@@ -88,9 +97,9 @@ def gen(pkgbase_path, args):
     # pkgbase_path = "usr/lib/modules/linux-x.x.x/pkgbase"
     kver = os.path.basename(os.path.dirname(pkgbase_path))
 
-    print("==> Generating hostonly image for {} {}".format(pkgbase, kver))
+    msg("Generating hostonly image for {} {}".format(pkgbase, kver))
     cmdline = get_cmdline('normal')
-    print("--> Kernel command line: " + cmdline)
+    msg2("Kernel command line: " + cmdline)
     call_dracut(
         *args.dracut_args,
         hostonly=True,
@@ -100,9 +109,9 @@ def gen(pkgbase_path, args):
         kver=kver,
     )
 
-    print("==> Generating fallback image for {} {}".format(pkgbase, kver))
+    msg("Generating fallback image for {} {}".format(pkgbase, kver))
     cmdline = get_cmdline('fallback')
-    print("--> Kernel command line: " + cmdline)
+    msg2("Kernel command line: " + cmdline)
     call_dracut(
         *args.dracut_args,
         hostonly=False,
@@ -115,12 +124,12 @@ def gen(pkgbase_path, args):
 
 @contextmanager
 def mount_esp(mountpoint):
-    print("==> Mounting ESP partition at {}".format(mountpoint))
+    msg("Mounting ESP partition at {}".format(mountpoint))
     sp.check_call(['mount-esp', mountpoint])
     try:
         yield
     finally:
-        print("==> Unmounting ESP partition at {}".format(mountpoint))
+        msg("Unmounting ESP partition at {}".format(mountpoint))
         sp.check_call(['umount', mountpoint])
 
 
