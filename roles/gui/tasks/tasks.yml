@@ -53,3 +53,14 @@
     name:
       - exfatprogs
     extra_args: --asdeps
+
+- name: "Better multi-touch touchpad guesture"
+  block:
+    - include_role:
+        name: aur-install
+      vars:
+        aur_packages:
+          - touchegg-git
+    - service:
+        name: touchegg
+        enabled: true
