@@ -1,31 +1,8 @@
 " {{ ansible_managed }}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" User: Aetf - aetf@unlimitedcodeworks.xyz
-" Maintainer:
-"       Amir Salihefendic
-"       http://amix.dk - amix@amix.dk
-"
-" Version:
-"       5.0 - 29/05/12 15:43:36
-"
-" Blog_post:
-"       http://amix.dk/blog/post/19691#The-ultimate-Vim-configuration-on-Github
-"
-" Awesome_version:
-"       Get this config, nice color schemes and lots of plugins!
-"
-"       Install the awesome version from:
-"
-"           https://github.com/amix/vimrc
-"
-" Syntax_highlighted:
-"       http://amix.dk/vim/vimrc.html
-"
-" Raw_version:
-"       http://amix.dk/vim/vimrc.txt
-"
 " Sections:
+"    -> Neovim specific
 "    -> Plugins
 "    -> General
 "    -> VIM user interface
@@ -39,9 +16,7 @@
 "    -> vimgrep searching and cope displaying
 "    -> Spell checking
 "    -> Misc
-"    -> Neovim specific
 "    -> Helper functions
-"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -82,9 +57,6 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Load plugins early so we can use them.
 
-" Set bash as shell, because fish is not compatible to vim-plug
-"set shell=/usr/bin/bash
-
 " Automatically download vim-plug
 if empty(glob(stdpath('data') . '/site/autoload/plug.vim'))
   silent exe '!curl -fLo ' . stdpath('data') . '/site/autoload/plug.vim'
@@ -100,12 +72,6 @@ Plug 'freeo/vim-kalisi'
 
 " Transparent background
 Plug 'miyakogi/seiya.vim'
-
-" syntax checking using external checkers
-Plug 'scrooloose/syntastic'
-
-" support for editing fish scripts
-Plug 'dag/vim-fish'
 
 " Rust language support
 Plug 'rust-lang/rust.vim'
@@ -191,27 +157,6 @@ Plug 'yangmillstheory/vim-snipe'
 " Initialize plugin system
 call plug#end()
 
-" Settings for syntastic
-" this is handled by vim-airline
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 1
-
-let g:syntastic_cpp_checkers = []
-let g:syntastic_aggregate_errors = 1
-
-" Settings for vim-fish
-"     Let :make to use fish for syntax checking
-autocmd FileType fish compiler fish
-"     Enable folding of block structures in fish
-autocmd FileType fish setlocal foldmethod=expr
-
-
 " Settings for coc.vim
 " press `tab` to pring up auto completion at a part of words
 inoremap <silent><expr> <TAB>
@@ -233,12 +178,6 @@ let g:ctrlp_working_path_mode = 'ra'
 " Settings for Seiya.vim
 let g:seiya_target_groups = has('nvim') ? ['guibg'] : ['ctermbg']
 let g:seiya_auto_enable=1 " this is disabled in ginit.vim for neovim-qt, which doesn't have transparent bg
-
-" Settings for vim-highlightedyank
-if !has('nvim')
-    " Trigger highlight event if not Neovim
-    map y <Plug>(highlightedyank)
-endif
 
 " Settings for anyfold
 autocmd Filetype * AnyFoldActivate
