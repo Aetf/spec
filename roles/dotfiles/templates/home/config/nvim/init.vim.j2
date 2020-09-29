@@ -45,6 +45,39 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Neovim specific
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has('nvim')
+    " Force to use system python internally which has python-neovim installed
+    if exists("$VIRTUAL_ENV") || exists("$CONDA_PREFIX")
+        let g:python3_host_prog=substitute(system("which -a python3 | head -n2 | tail -n1"), "\n", '', 'g')
+    else
+        let g:python3_host_prog=substitute(system("which python3"), "\n", '', 'g')
+    endif
+    " Disable python2
+    let g:loaded_python_provider=1
+    let g:python_host_skip_check=1
+    " Use true colors
+    set termguicolors
+    " Load Archlinux specific vimfiles
+    set runtimepath^=/usr/share/vim/vimfiles
+    " ESC for exit terminal mode
+    tnoremap <Esc> <C-\><C-n>
+    " Window navigation in terminal mode
+    tnoremap <C-h> <C-\><C-n><C-w>h
+    tnoremap <C-j> <C-\><C-n><C-w>j
+    tnoremap <C-k> <C-\><C-n><C-w>k
+    tnoremap <C-l> <C-\><C-n><C-w>l
+    " ShaDa
+    set shada='1000,f1,<500,:100,/100,h,%
+    " Turn off list mode in terminal
+    autocmd TermOpen * setlocal nolist
+    " Live command preview
+    set inccommand=split
+endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Load plugins early so we can use them.
@@ -77,16 +110,22 @@ Plug 'dag/vim-fish'
 " Rust language support
 Plug 'rust-lang/rust.vim'
 
+" TOML language
+Plug 'cespare/vim-toml'
+
 " CtrlP for fuzzy finder
 Plug 'ctrlpvim/ctrlp.vim'
 
 " Git gutter
 Plug 'airblade/vim-gitgutter'
 
+" Highlight yank region
+Plug 'machakann/vim-highlightedyank'
+
 " Anyfold for smart indent based folding
 Plug 'pseewald/vim-anyfold'
 
-" Fold Cycling with one key
+" Fold cycling with one key
 Plug 'arecarn/vim-fold-cycle'
 
 " Indent text object
@@ -195,12 +234,40 @@ let g:ctrlp_working_path_mode = 'ra'
 let g:seiya_target_groups = has('nvim') ? ['guibg'] : ['ctermbg']
 let g:seiya_auto_enable=1 " this is disabled in ginit.vim for neovim-qt, which doesn't have transparent bg
 
+" Settings for vim-highlightedyank
+if !has('nvim')
+    " Trigger highlight event if not Neovim
+    map y <Plug>(highlightedyank)
+endif
+
 " Settings for anyfold
 autocmd Filetype * AnyFoldActivate
 set foldlevel=1
 set foldminlines=3
-" unfolds the line in which the cursor is located when opening a file
+"" unfolds the line in which the cursor is located when opening a file
 autocmd User anyfoldLoaded normal zv
+
+" NERD Tree configuration
+map <C-n> :NERDTreeToggle<CR>
+
+autocmd StdinReadPre * let s:std_in=1
+"" open NERDTree if vim starts up on opening a directory
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+"" close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Auto close
+let g:autoclose_vim_commentmode=1
+
+" NERD Commenter configuration
+"" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+"" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+"" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -230,6 +297,19 @@ command W w !sudo tee % > /dev/null
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Change cursor style between modes. This works for GUI in vim, and also for terminal in nvim
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+if has('nvim-0.2.0') && !has('nvim-0.2.1')
+    " There's bug in 0.2.0 that flipping blinkon0 and blinkon1 on Konsole
+    set guicursor=n-v-c:block-Cursor/lCursor-blinkon1,i-ci:ver25-Cursor/lCursor-blinkon1,r-cr:hor20-Cursor/lCursor-blinkon1
+endif
+" For vim, extra escape sequence is needed for cursor change in terminal
+if !has('nvim')
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+    let &t_EI = "\<Esc>]50;CUrsorShape=0\x7"
+endif
+
 " Show hybrid line numbers.
 set relativenumber
 set number
@@ -321,10 +401,6 @@ if has('nvim')
     let g:terminal_color_15 = '#ffffff'
 endif
 
-" Change cursor shape
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-let &t_EI = "\<Esc>]50;CUrsorShape=0\x7"
-
 " Set extra options when running in GUI mode
 if has("gui_running")
     set guioptions-=T
@@ -350,6 +426,14 @@ set nobackup
 set nowb
 set noswapfile
 
+" Toggle Undotree window
+map <leader>u :UndotreeToggle<cr>
+
+" Enable persistent undo
+if has("persistent_undo")
+    set undodir=~/.vim/undo
+    set undofile
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
@@ -543,31 +627,6 @@ map <leader>q :e /tmp/workspace<cr>
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Neovim specific
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has('nvim')
-    " Use true colors
-    set termguicolors
-    " Change cursor shape between modes
-    :let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-    " Load Archlinux specific vimfiles
-    set runtimepath^=/usr/share/vim/vimfiles
-    " ESC for exit terminal mode
-    tnoremap <Esc> <C-\><C-n>
-    " Window navigation in terminal mode
-    tnoremap <C-h> <C-\><C-n><C-w>h
-    tnoremap <C-j> <C-\><C-n><C-w>j
-    tnoremap <C-k> <C-\><C-n><C-w>k
-    tnoremap <C-l> <C-\><C-n><C-w>l
-    " ShaDa
-    set shada='1000,f1,<500,:100,/100,h,%
-    " Turn off list mode in terminal
-    autocmd TermOpen * setlocal nolist
-    " Live command preview
-    set inccommand=split
-endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
