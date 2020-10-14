@@ -1,5 +1,16 @@
 # {{ ansible_managed }}
 
+Host xps
+    User aetf
+    HostName aetf-arch-xps.zt.unlimited-code.works
+    Port 59901
+    ForwardX11 yes
+    ForwardX11Trusted yes
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
 Host mcsh
     User root
     HostName mcsh.unlimited-code.works

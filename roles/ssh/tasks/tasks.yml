@@ -1,0 +1,16 @@
+---
+- name: "Install OpenSSH"
+  pacman:
+    name:
+      - openssh
+    state: present
+- name: "Template sshd config"
+  include_role:
+    name: template-install
+  vars:
+    src_config_home: "etc/ssh"
+    dest_config_home: "/etc/ssh"
+- name: "Enable sshd service"
+  systemd:
+    enabled: yes
+    state: started
