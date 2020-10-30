@@ -36,7 +36,7 @@ class Application(QApplication):
             print(f"Error setting up singal handling socket for writeSock: {self.writeSock.errorString()}")
             return sys.exit(-1)
         signal.signal(signal.SIGINT, signal.SIG_DFL)
-        signal.set_wakeup_fd(self.writeSock.socketDescriptor())
+        signal.set_wakeup_fd(int(self.writeSock.socketDescriptor()))
 
         # process events so localServer can emit and handle the connection above
         self.processEvents()
@@ -143,7 +143,7 @@ class Window(QWidget):
 
         # Draw the selected items into the grid cells.
         dpr = self.devicePixelRatioF()
-        dragPixmap = QPixmap(dpr * xCount * size + xCount, dpr * yCount * size + yCount)
+        dragPixmap = QPixmap(int(round(dpr * xCount * size + xCount)), int(round(dpr * yCount * size + yCount)))
         dragPixmap.setDevicePixelRatio(dpr)
         dragPixmap.fill(Qt.transparent)
         painter = QPainter(dragPixmap)
@@ -176,7 +176,7 @@ class Window(QWidget):
         pixmap = self.dragPixmap(urls)
         drag.setPixmap(pixmap)
 
-        hotSpot = QPoint(pixmap.width() / pixmap.devicePixelRatioF() / 2, 0)
+        hotSpot = QPoint(int(round(pixmap.width() / pixmap.devicePixelRatioF() / 2.0)), 0)
         drag.setHotSpot(hotSpot)
 
         action = drag.exec_(Qt.MoveAction | Qt.CopyAction | Qt.LinkAction, Qt.CopyAction)
