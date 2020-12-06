@@ -13,7 +13,7 @@
   include_role:
     name: aur-install
   vars:
-    aur_packages: yay
+    aur_packages: paru
 - name: "Install basic packages"
   include_role:
     name: aur-install
