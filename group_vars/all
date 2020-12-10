@@ -28,3 +28,5 @@ basic_packages:
   - atool
   # for pacdiff
   - pacman-contrib
+  # better xdg-utils
+  - handlr-bin
