@@ -1,10 +1,8 @@
 [Trigger]
 Operation=Install
 Operation=Upgrade
-Type=Package
-Target=refind-efi
-Target=refind
-Target=refind-git
+Type=Path
+Target = usr/share/refind/**/*
 
 [Action]
 Description = Updating rEFInd on ESP
