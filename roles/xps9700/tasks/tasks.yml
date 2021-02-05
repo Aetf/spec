@@ -18,6 +18,21 @@
       pacman:
         name: fprintd
         state: present
+- name: "Correct camera device node assignment"
+  block:
+    - name: "Install udev rules for the camera"
+      copy:
+        src: "etc/udev/rules.d/83-webcam.rules"
+        dest: "/etc/udev/rules.d"
+        mode: "0644"
+- name: "Soundwire audio driver"
+  block:
+    - name: "Install sof-firmware for audio device"
+      pacman:
+        name: sof-firmware
+        state: present
+
+
 - name: "Window Hellow camera"
   block:
     # TODO: howdy
@@ -29,13 +44,6 @@
           - howdy
     # TODO: patch howdy to not print out OpenCV warnings in
 
-- name: "Soundwire audio driver"
-  block:
-    - name: "Install sof-firmware for audio device"
-      pacman:
-        name: sof-firmware
-        state: present
-
 - name: "Energy consumption"
   block:
     - name: "Install tlp and cpupower"
@@ -43,6 +51,7 @@
         name:
           - cpupower
           - tlp
+          # also control radio device from TLP
           - tlp-rdw
         state: present
     - name: "Install plasma-pstate plasmoid"
@@ -58,6 +67,7 @@
         name: tlp.service
         enabled: yes
         state: started
+    # tlp-rdw is used to manage radio devices
     - name: "Mask {{ item }}"
       systemd:
         name: "{{ item }}"

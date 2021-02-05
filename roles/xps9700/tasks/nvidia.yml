@@ -17,8 +17,7 @@
   notify:
     - rebuild unified kernel images
 - name: "Nvidia power management udev rules"
-  include_role:
-    name: template-install
-  vars:
-    src_config_home: "etc/udev"
-    dest_config_home: "/etc/udev"
+  copy:
+    src: "etc/udev/rules.d/80-nvidia-pm.rules"
+    dest: "/etc/udev/rules.d"
+    mode: "0644"
