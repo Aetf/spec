@@ -32,17 +32,35 @@
         name: sof-firmware
         state: present
 
-
 - name: "Window Hellow camera"
   block:
-    # TODO: howdy
     - name: "Install howdy"
       include_role:
         name: aur-install
       vars:
         aur_packages:
           - howdy
-    # TODO: patch howdy to not print out OpenCV warnings in
+    - name: "Show notice when face detection is attempted"
+      lineinfile:
+        path: /usr/lib/security/howdy/config.ini
+        insertafter: '\[core\]'
+        regexp: '^detection_notice\b'
+        line: 'detection_notice = true'
+        state: present
+    - name: "Use the IR sensor for face detection"
+      lineinfile:
+        path: /usr/lib/security/howdy/config.ini
+        insertafter: '\[core\]'
+        regexp: '^device_path\b'
+        line: 'device_path = /dev/cams/builtin-ir'
+        state: present
+    - name: "Disable snapshots"
+      lineinfile:
+        path: /usr/lib/security/howdy/config.ini
+        regexp: '^capture_(\w+)'
+        backrefs: yes
+        line: 'capture_\1 = false'
+        state: present
 
 - name: "Energy consumption"
   block:
