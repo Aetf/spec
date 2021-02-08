@@ -167,6 +167,28 @@ def blockinfile(filepath, block_lines, mark0, mark1):
         f.write(new_content)
 
 
+def dir_diff_flatten(dcmp):
+    """Flaten the dcmp object recursively, return any diff"""
+    left_only = [
+        os.path.join(dcmp.left, path)
+        for path in dcmp.left_only
+    ]
+    right_only = [
+        os.path.join(dcmp.right, path)
+        for path in dcmp.right_only
+    ]
+    diff_files = [
+        os.path.join(dcmp.left, path)
+        for path in dcmp.common_funny + dcmp.diff_files + dcmp.funny_files
+    ]
+    for sd in dcmp.subdirs.values():
+        sd_left_only, sd_right_only, sd_diff = dir_diff_flatten(sd)
+        left_only += sd_left_only
+        right_only += sd_right_only
+        diff_files += sd_diff
+    return left_only, right_only, diff_files
+
+
 def clean():
     # We are using /efi/EFI/refind/manual.conf to provide boot menus, no need for the auto generated one.
     info("Removing unneeded conf file")
@@ -179,21 +201,31 @@ def clean():
         "-delete"
     ])
 
-    refind_root = os.path.join(ESP_MOUNTPOINT, "/EFI/refind")
+    refind_root = os.path.join(ESP_MOUNTPOINT, "EFI/refind")
     icons=os.path.join(refind_root, "icons")
     icons_backup=os.path.join(refind_root, "icons-backup")
 
     # Remove back icons if identical
     if os.path.isdir(icons_backup):
-        _, mismatch, errors = filecmp.cmpfiles(icons, icons_backup, shallow=False)
-        if len(mismatch) + len(errors) == 0:
+        dcmp = filecmp.dircmp(icons, icons_backup)
+        left, right, diff = dir_diff_flatten(dcmp)
+        if left + right + diff:
+            warning("Detected updated icons, check and remove ${icons_backup} if needed")
+            print('--> Different files')
+            for path in diff:
+                print(path)
+            print('--> Only in {}'.format(icons))
+            for path in left:
+                print(path)
+            print('--> Only in {}'.format(icons_backup))
+            for path in right:
+                print(path)
+        else:
             info("Removing identical icons-backup")
             try:
                 shutil.rmtree(icons_backup)
             except Exception as e:
                 warning("Failed to remove {}: {}".format(icons_backup, e))
-        else:
-            warning("Detected updated icons, check and remove ${icons}-backup if needed")
 
 
 if __name__ == "__main__":
