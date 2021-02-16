@@ -2,9 +2,9 @@
 # @= ansible_managed =@
 
 # XDG Stuff
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
-export XDG_CACHE_HOME=$HOME/.cache
+export XDG_CONFIG_HOME=@= xdg_config_home | replace('~', '$HOME') =@
+export XDG_DATA_HOME=@= xdg_data_home | replace('~', '$HOME') =@
+export XDG_CACHE_HOME=@= xdg_cache_home | replace('~', '$HOME') =@
 
 # Basic preference
 export EDITOR=vim

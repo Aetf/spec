@@ -1,2 +1,4 @@
 ---
-xdg_config_home: "~{{ user.name }}/.config"
+xdg_config_home: "$HOME/.config"
+xdg_data_home: "$HOME/.local/share"
+xdg_cache_home: "$HOME/.cache"
