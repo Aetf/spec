@@ -107,3 +107,10 @@
     dest: /etc/dracut.conf.d/cmdline.d/disable-audit.conf
   notify:
     - rebuild unified kernel images
+
+- name: "Disable unused dracut modules to reduce noise"
+  template:
+    src: etc/dracut.conf.d/unused-modules.conf.j2
+    dest: /etc/dracut.conf.d/unused-modules.conf
+  notify:
+    - rebuild unified kernel images
