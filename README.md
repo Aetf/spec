@@ -23,3 +23,9 @@
         - `@swapfiles` -> `/.swapfiles`
         - `@snapshots` -> `/.snapshots`
 * The swap file is located at `/.swapfiles/hibernate`
+
+
+#### Reasoning
+
+The LVM is used so that we can extend and move partitions around even though Luks header can not be moved.
+As the LVM maintains the mapping from PV blocks to LV blocks, and they can be nonlinear.
