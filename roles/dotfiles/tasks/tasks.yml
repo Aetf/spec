@@ -40,3 +40,11 @@
   loop:
     - systemd-tmpfiles-setup.service
     - systemd-tmpfiles-clean.timer
+
+- name: "Enable ssh-agent as systemd service"
+  systemd:
+    scope: user
+    name: "ssh-agent.service"
+    enabled: yes
+    state: started
+    no_block: yes
