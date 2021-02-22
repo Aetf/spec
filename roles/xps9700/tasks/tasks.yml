@@ -12,8 +12,10 @@
           - libfprint-tod-git
           - libfprint-2-tod1-xps9300-bin
     - name: "Mark libfprint-tod-git as deps"
-      command:
-        cmd: "pacman -D --asdeps libfprint-tod-git"
+      shell:
+        cmd: "pacman -Qdq libfprint-tod-git || pacman -D --asdeps libfprint-tod-git"
+      register: libfprint_tod_git_result
+      changed_when: "libfprint_tod_git_result.stdout is search('install reason has been set')"
     - name: "Install fprintd DBUS service"
       pacman:
         name: fprintd
