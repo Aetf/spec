@@ -29,20 +29,9 @@ log:
 
 
 # Ansible playbook depenencies handling
-# TODO: Revisit this after ansible 2.10 is released with PR 67843,
-# which should enable `ansible-galaxy install -r requirements.yml`
-# to install both roles and collections to default path (as configured
-# in ansible.cfg?)
-
-deps/roles/.dirstamp: requirements.yml
-	ansible-galaxy role install -r $< -f -p deps/roles
-	@touch $@
-
-deps/ansible_collections/.dirstamp: requirements.yml
-	ansible-galaxy collection install -r $< -p deps
-	@touch $@
-
-deps/.dirstamp: deps/roles/.dirstamp deps/ansible_collections/.dirstamp
+# the target path is set in ansible.cfg collections_path and roles_path
+deps/.dirstamp: requirements.yml
+	ansible-galaxy install -r $<
 	@touch $@
 
 .PHONY: playbook stop start status test
