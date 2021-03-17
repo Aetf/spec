@@ -81,6 +81,7 @@
       loop:
         - { name: "refind-upgrade", path: "usr/local/bin/", mode: "0755" }
         - { name: "refind.hook", path: "etc/pacman.d/hooks/", mode: "0644" }
+        - { name: "ensure-vfat.hook", path: "etc/pacman.d/hooks/", mode: "0644" }
       notify:
         - upgrade rEFInd on ESP
     - name: "Create rEFInd config directories"
