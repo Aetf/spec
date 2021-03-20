@@ -4,6 +4,7 @@
     name:
       - nvidia
       - nvidia-settings
+      - nvidia-prime
 - name: "Skip nouveau in initramfs"
   template:
     src: etc/dracut.conf.d/blacklist-nouveau.conf.j2
@@ -20,4 +21,12 @@
   copy:
     src: "etc/udev/rules.d/80-nvidia-pm.rules"
     dest: "/etc/udev/rules.d"
+    mode: "0644"
+
+# Prevent X from loading nvidia video driver by manually
+# create a default screen and assign only intel GPU to it
+- name: "Prevent X from loading nvidia video driver"
+  copy:
+    src: etc/X11/xorg.conf.d/90-static-layout.conf
+    dest: /etc/X11/xorg.conf.d/
     mode: "0644"
