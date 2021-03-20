@@ -60,7 +60,7 @@
         name: aur-install
       vars:
         aur_packages:
-          - touchegg-git
+          - touchegg
     - service:
         name: touchegg
         enabled: true
