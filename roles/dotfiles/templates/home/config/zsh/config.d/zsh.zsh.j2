@@ -6,10 +6,6 @@
 # multibytes
 setopt COMBINING_CHARS
 
-# by default: export WORDCHARS='*?_-.[]~=/&;!#$%^(){}<>'
-# we take out the slash, period, angle brackets, dash here.
-export WORDCHARS='*?_[]~=&;!#$%^(){}'
-
 # History
 HISTFILE=$XDG_DATA_HOME/zsh/histfile
 HISTSIZE=10000000
@@ -30,9 +26,8 @@ setopt HIST_VERIFY               # Don't execute immediately upon history expans
 autoload -U select-word-style
 select-word-style bash
 
-# by default: export WORDCHARS='*?_-.[]~=/&;!#$%^(){}<>'
-# we take out the slash, period, angle brackets, dash here.
-export WORDCHARS='*?_[]~=&;!#$%^(){}'
+# chars to be considered as part of a word
+export WORDCHARS=':@-./_~?&=%+#'
 
 # use paste escape sequence
 autoload -Uz bracketed-paste-magic
