@@ -1,8 +1,8 @@
 #jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
 # @= ansible_managed =@
 
-# use emacs mode without multibyte warning
-bindkey -me 2>/dev/null
+# use emacs mode
+bindkey -e
 
 # create a zkbd compatible hash.
 typeset -g -A key
@@ -60,6 +60,9 @@ key[Alt-Del]="${terminfo[kDC3]}"
 
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
+# See also:
+#     http://zsh.sourceforge.net/FAQ/zshfaq03.html#l25
+#     https://github.com/fish-shell/fish-shell/issues/2139
 if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
     autoload -Uz add-zle-hook-widget
     function zle_application_mode_start { echoti smkx }
