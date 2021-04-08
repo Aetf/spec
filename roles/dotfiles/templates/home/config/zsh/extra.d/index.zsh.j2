@@ -1,0 +1,18 @@
+#jinja2:variable_start_string:'@=', variable_end_string:'=@', block_start_string:'@@', block_end_string:'@@', comment_start_string:'@#', comment_end_string:'#@'
+# @= ansible_managed =@
+
+() {
+    0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
+    0="${${(M)0:#/*}:-$PWD/$0}"
+
+    for f in ${0:h}/*.zsh; do
+        case $f in
+            */index.zsh)
+                continue
+                ;;
+            *)
+                source "$f"
+                ;;
+        esac
+    done
+}

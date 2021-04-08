@@ -26,3 +26,7 @@ for varname ($varnames) {
 if [ -d $HOME/.local/bin ]; then
     uappend path $HOME/.local/bin
 fi
+
+if [ -d $ZDOTDIR/zinit/polaris/bin ]; then
+    uappend path $ZDOTDIR/zinit/polaris/bin
+fi

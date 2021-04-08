@@ -2,7 +2,6 @@
 # @= ansible_managed =@
 
 # Alias
-alias ls='ls --ignore=lost+found --color=auto -h -v --indicator-style=classify'
 alias ll='ls -l'
 alias la='ls -a'
 alias lla='ls -al'
@@ -10,7 +9,6 @@ alias bd=". bd -si"
 alias kfg="kill -- -\$(jobs -p); fg"
 alias ps='ps xawf -eo pid,user,args'
 alias rm='rm -I --preserve-root'
-alias work='cd ~work'
 alias p='paru'
 alias open='handlr open'
 function cdmk() {
@@ -24,3 +22,13 @@ function htop() {
     fi
     env TERM=screen HTOPRC=$htoprc htop "$@"
 }
+
+# A handy in mem workspace,
+# created by systemd-tmpfiles-setup
+# and have a shortcurt: alias work='cd ~work'
+export work=/dev/shm/$USER/workspace
+alias work='cd ~work'
+
+# The ansible dotfiles
+export spec=$HOME/.local/spec
+alias spec='cd ~spec'

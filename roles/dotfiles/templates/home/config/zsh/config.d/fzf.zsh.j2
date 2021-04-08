@@ -18,4 +18,4 @@ typeset -g FZF_CTRL_T_COMMAND="fd --type f --hidden --no-ignore-vcs --follow . .
 typeset -g FZF_ALT_C_COMMAND="fd --type d --hidden --no-ignore-vcs --follow . . $HOME"
 # use exa to show entries of the directory in the preview window
 # the preview window can be scrolled by ctrl+UP and ctrl+DOWN
-typeset -g FZF_ALT_C_OPTS="--preview 'exa --tree --color=always {} | head -200'"
+typeset -g FZF_ALT_C_OPTS="--preview 'exa --tree --level=2 --color=always {}'"
