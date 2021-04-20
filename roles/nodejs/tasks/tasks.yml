@@ -8,5 +8,5 @@
   include_role:
     name: template-install
   vars:
-    src_config_home: home/config/zsh/env.d
-    dest_config_home: "~{{ user.name }}/.config/zsh/env.d"
+    src_config_home: home/config/zsh/extra.d
+    dest_config_home: "~{{ user.name }}/.config/zsh/extra.d"
