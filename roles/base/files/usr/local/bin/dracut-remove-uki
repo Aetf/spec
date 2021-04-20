@@ -8,9 +8,7 @@ remove_gen() {
 
 	read -r pkgbase < "/${line}"
 
-	echo "$pkgbase"
-
-	find "${ESP_MOUNTPOINT}/EFI/Linux" -type f -iname "Arch-${pkgbase}"'*.efi' -print -delete
+	find "${ESP_MOUNTPOINT}/EFI/Linux" -type f -iname "Arch-${pkgbase}"'*.efi' -exec echo '--> rm {}' ';' -delete
 }
 
 echo "==> Mounting ESP partition at ${ESP_MOUNTPOINT}"
