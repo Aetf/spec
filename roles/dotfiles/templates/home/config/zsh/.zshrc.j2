@@ -90,6 +90,10 @@ fi
         sbin'bin/exa'
             @ogham/exa
 
+        # delta the better diff
+        from'gh-r' bpick'*x86_64*linux*musl*' sbin'*/delta'
+            @dandavison/delta
+
         # fd the better find
         from'gh-r' bpick'*x86_64*linux*musl*' sbin'*/fd'
             @sharkdp/fd
