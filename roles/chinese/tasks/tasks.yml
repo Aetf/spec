@@ -18,11 +18,6 @@
   vars:
     src_config_home: "etc/profile.d"
     dest_config_home: "/etc/profile.d"
-- name: "Configure fontconfig to use language dependent font selection"
-  file:
-    src: ../conf.avail/70-noto-cjk.conf
-    dest: /etc/fonts/conf.d/70-noto-cjk.conf
-    state: link
 - name: "Prefer CJK SC fonts"
   template:
     src: etc/fonts/conf.d/50-cjk-sc.conf.j2
