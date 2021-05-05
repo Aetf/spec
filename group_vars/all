@@ -20,8 +20,6 @@ system_fonts:
 
 basic_packages:
   - rsync
-  - fd
-  - ripgrep
   - cmake
   - gdb
   # for automatically extract archive files
