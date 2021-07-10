@@ -33,12 +33,6 @@
       pacman:
         name: sof-firmware
         state: present
-- name: "SD card reader driver"
-  include_role:
-    name: aur-install
-  vars:
-    aur_packages:
-      - rts_bpp-dkms-git
 
 - name: "Window Hellow camera"
   block:
