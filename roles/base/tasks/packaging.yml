@@ -19,33 +19,35 @@
     name: aur-install
   vars:
     aur_packages: "{{ basic_packages }}"
-- name: "Enable pacman to also look for packages in user home"
-  lineinfile:
+- name: "Setup dropin config folder for pacman"
+  file:
+    path: /etc/pacman.d/confs
+    state: directory
+    mode: '0644'
+- name: "Allow dropin files for pacman.conf"
+  blockineinfile:
     path: /etc/pacman.conf
-    backrefs: yes
-    regexp: '^CacheDir(\s+=)((?:(?:\s+\S+(?!\S))(?<!\s/home/{{ user.name }}/.cache/packages))+\s*?)(\n?)$'
-    insertafter: "^#CacheDir"
-    line: 'CacheDir\1\2 /home/{{ user.name }}/.cache/packages\3'
-    state: present
-- name: "Enable fancier output for pacman"
-  lineinfile:
-    path: /etc/pacman.conf
-    backrefs: yes
-    regexp: "^{{ item }}"
-    insertafter: "^#{{ item }}"
-    line: "{{ item }}"
-    state: present
+    insertbefore: EOF
+    block: |
+      # Custom options
+      [options]
+      Include = /etc/pacman.d/confs/*.conf
+- name: "Install pacman dropin files"
+  copy:
+    src: "{{ item.path }}/{{ item.name }}"
+    dest: "/{{ item.path }}/"
+    mode: "{{ item.mode }}"
   loop:
-    - "Color"
-    - "TotalDownload"
-    - "VerbosePkgLists"
+    - { name: "no-db-sig.conf", path: "etc/pacman.d/confs", mode: "0644" }
+    - { name: "fancy.conf", path: "etc/pacman.d/confs", mode: "0644" }
+    - { name: "parallel.conf", path: "etc/pacman.d/confs", mode: "0644" }
 
 - name: "Enable parallel build for makepkg"
   lineinfile:
     path: /etc/makepkg.conf
     regexp: "^MAKEFLAGS"
     insertafter: "^#MAKEFLAGS"
-    line: 'MAKEFLAGS="-j"'
+    line: 'MAKEFLAGS="-j$(nproc)"'
     state: present
 - name: "Use in memory build dir for makepkg"
   lineinfile:
