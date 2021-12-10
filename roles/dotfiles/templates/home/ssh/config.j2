@@ -1,5 +1,14 @@
 # {{ ansible_managed }}
 
+Host mac
+    User aetf
+    HostName aetf-arch-mac.zt.unlimited-code.works
+    Port 22
+    ForwardAgent yes
+    ControlMaster auto
+    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPersist yes
+
 Host xps
     User aetf
     HostName aetf-arch-xps.zt.unlimited-code.works
@@ -82,21 +91,67 @@ Host abacus
     ControlPath ~/.ssh/masters/%n:%r@%h:%p
     ControlPersist yes
 
+# for docker connection, disable control path
+Host docker-cloudlab
+    HostName nfs.dyninfer.gaia-pg0.clemson.cloudlab.us
+Match final host *.cloudlab.us originalhost docker-cloudlab
+    ControlMaster no
+    ControlPath none
+    ControlPersist no
+Host clockwork-builder
+    User user
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    CheckHostIP no
+    HostName localhost
+    Port 2222
+
+Host clockwork-builder-proxy
+    HostName clgpu022.clemson.cloudlab.us
+
+Host clockwork-builder-remote
+    User user
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    CheckHostIP no
+    # eith port or proxy command, depends on local or remote
+    ProxyCommand ssh -W localhost:2223 clockwork-builder-proxy
+
+Host clockwork-builder-remote-0
+    User user
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    CheckHostIP no
+    # eith port or proxy command, depends on local or remote
+    ProxyCommand ssh -W localhost:2223 clockwork-builder-proxy
+Host clockwork-builder-remote-1
+    User user
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    CheckHostIP no
+    # eith port or proxy command, depends on local or remote
+    ProxyCommand ssh -W localhost:2224 clockwork-builder-proxy
+
 Host clnode???
     HostName %h.clemson.cloudlab.us
+Host clgpu???
+    HostName %h.clemson.cloudlab.us
+Host nfs
+    HostName %h.dyninfer.gaia-pg0.clemson.cloudlab.us
 Host node-?
-    HostName %h.scaleml.gaia-pg0.wisc.cloudlab.us
+    HostName %h.dyninfer.gaia-pg0.clemson.cloudlab.us
 Match final host *.cloudlab.us
     User peifeng
     StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
     ForwardAgent yes
     ControlMaster auto
-    ControlPath ~/.ssh/masters/%n:%r@%h:%p
+    ControlPath ~/.ssh/masters/%C-%n
     ControlPersist yes
 
-Match user cc
-    HostName 192.5.87.%h
-Match final host 192.5.87.*
+Host cc
+    HostName 129.114.108.31
+Match final host 129.114.108.*
     User cc
     UserKnownHostsFile /dev/null
     ForwardAgent yes
@@ -104,3 +159,4 @@ Match final host 192.5.87.*
     ControlPath ~/.ssh/masters/%n:%r@%h:%p
     ControlPersist yes
     StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
