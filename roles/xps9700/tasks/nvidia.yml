@@ -2,8 +2,8 @@
 - name: "Install nvidia driver"
   pacman:
     name:
-      - nvidia
-      - nvidia-settings
+      - nvidia-dkms
+      - nvidia-utils
       - nvidia-prime
 - name: "Skip nouveau in initramfs"
   template:
@@ -33,7 +33,7 @@
 
 - name: "Prevent vulkan from using nvidia"
   blockinfile:
-    path: /etc/pacman.d/confs/no-nvidia-vuklan.conf
+    path: /etc/pacman.d/confs/no-nvidia-vulkan.conf
     block: |
       [options]
       NoExtract = usr/share/vulkan/icd.d/nvidia_icd.json

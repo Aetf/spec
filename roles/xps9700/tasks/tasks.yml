@@ -74,14 +74,6 @@
           # also control radio device from TLP
           - tlp-rdw
         state: present
-    - name: "Install plasma-pstate plasmoid"
-      include_role:
-        name: aur-install
-      vars:
-        aur_packages:
-          - plasma5-applets-plasma-pstate
-      tags:
-        - gui
     - name: "Enable tlp service"
       systemd:
         name: tlp.service
