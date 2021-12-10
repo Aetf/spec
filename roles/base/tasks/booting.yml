@@ -116,7 +116,7 @@
       include_role:
         name: aur-install
       vars:
-        aur_packages: plymouth-git
+        aur_packages: plymouth
     - name: "Install plymouth theme"
       synchronize:
         src: "usr/share/plymouth/themes/oemlogo"
