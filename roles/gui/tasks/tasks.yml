@@ -21,7 +21,7 @@
     - copy:
         src: usr/local/bin/apply-user-monitor-layout
         dest: /usr/local/bin/
-        mode: 755
+        mode: '0755'
 - name: "Enable SDDM service"
   service:
     name: sddm
