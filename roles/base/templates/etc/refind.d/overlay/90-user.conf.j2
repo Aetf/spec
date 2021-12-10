@@ -22,13 +22,15 @@ scanfor manual,internal,external
 scan_all_linux_kernels false
 dont_scan_dirs +,/EFI/Linux
 dont_scan_files +,fwupdx64.efi
+fold_linux_kernels
+extra_kernel_version_strings linux-zen,linux-lts,linux
 
 menuentry Arch {
     icon /EFI/refind/icons/os_arch.png
-    loader /EFI/Linux/Arch-linux.efi
+    loader /EFI/Linux/Arch-linux-zen.efi
     graphics on
     submenuentry "Use fallback initrd" {
-        loader /EFI/Linux/Arch-linux-fallback.efi
+        loader /EFI/Linux/Arch-linux-zen-fallback.efi
         graphics off
     }
 }
