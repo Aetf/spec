@@ -23,9 +23,9 @@
   file:
     path: /etc/pacman.d/confs
     state: directory
-    mode: '0644'
+    mode: '0755'
 - name: "Allow dropin files for pacman.conf"
-  blockineinfile:
+  blockinfile:
     path: /etc/pacman.conf
     insertbefore: EOF
     block: |
