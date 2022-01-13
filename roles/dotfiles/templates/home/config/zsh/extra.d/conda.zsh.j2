@@ -4,5 +4,7 @@
 # load conda
 if [ -f /opt/mambaforge/etc/profile.d/conda.sh ]; then
     source /opt/mambaforge/etc/profile.d/conda.sh
-    alias mamba=/opt/mambaforge/bin/mamba
+fi
+if [ -f /opt/mambaforge/etc/profile.d/mamba.sh ]; then
+    source /opt/mambaforge/etc/profile.d/mamba.sh
 fi
