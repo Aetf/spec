@@ -1,29 +1,15 @@
 ---
-- name: "Setup AUR helper user"
-  user:
-    name: aur_builder
-    group: wheel
-- name: "Make sure aur_builder can run pacman with passwordless sudo"
-  lineinfile:
-    path: /etc/sudoers.d/50-aur_builder-pacman
-    line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-    create: yes
-    validate: 'visudo -cf %s'
-- name: "Install AUR helper"
-  include_role:
-    name: aur-install
-  vars:
-    aur_packages: paru
-- name: "Install basic packages"
-  include_role:
-    name: aur-install
-  vars:
-    aur_packages: "{{ basic_packages }}"
 - name: "Setup dropin config folder for pacman"
   file:
     path: /etc/pacman.d/confs
     state: directory
     mode: '0755'
+- name: "Set defaults explicitly so dropin files can append"
+  lineinfile:
+    path: /etc/pacman.conf
+    regexp: '^#(CacheDir.*)$'
+    line: '\1'
+    backrefs: yes
 - name: "Allow dropin files for pacman.conf"
   blockinfile:
     path: /etc/pacman.conf
@@ -41,6 +27,7 @@
     - { name: "no-db-sig.conf", path: "etc/pacman.d/confs", mode: "0644" }
     - { name: "fancy.conf", path: "etc/pacman.d/confs", mode: "0644" }
     - { name: "parallel.conf", path: "etc/pacman.d/confs", mode: "0644" }
+    - { name: "local-aur.conf", path: "etc/pacman.d/confs", mode: "0644" }
 
 - name: "Enable parallel build for makepkg"
   lineinfile:
@@ -63,3 +50,69 @@
     insertafter: "^#PACKAGER"
     line: 'PACKAGER="Aetf <aetf@unlimited-code.works>"'
     state: present
+
+- name: "Setup AUR helper for ansible"
+  block:
+  - name: "Create aur_builder group"
+    group:
+      name: aur_builder
+      system: yes
+  - name: "Create aur_builder user"
+    user:
+      name: aur_builder
+      group: aur_builder
+      system: yes
+      home: /var/cache/ansible_aur
+      move_home: yes
+  - name: "Make sure aur_builder can run pacman with passwordless sudo"
+    lineinfile:
+      path: /etc/sudoers.d/50-aur_builder-pacman
+      line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+      create: yes
+      validate: 'visudo -cf %s'
+
+- name: "Install basic packages"
+  include_role:
+    name: aur-install
+  vars:
+    aur_packages: "{{ basic_packages }}"
+
+- name: "Configure local aur repo"
+  file:
+    path: /var/lib/repo/aur
+    state: directory
+    mode: '02775'
+    group: aur_builder
+- name: "Update local aur repo database"
+  command:
+    cmd: repo-add /var/lib/repo/aur/aur.db.tar.zst
+    creates: /var/lib/repo/aur/aur.db.tar.zst
+- name: "Add user to aur_builder group"
+  user:
+    name: "{{ user.name }}"
+    groups: aur_builder
+    append: yes
+  tags:
+  - user
+
+- name: "Install AUR helper"
+  include_role:
+    name: aur-install
+  vars:
+    aur_packages: paru
+- name: "Configure paru"
+  blockinfile:
+    path: /etc/paru.conf
+    insertbefore: EOF
+    block: |
+      # Custom options from ansible
+      [options]
+      BottomUp
+      RemoveMake
+      SudoLoop
+      CombinedUpgrade
+      CleanAfter
+      UpgradeMenu
+      NewsOnUpgrade
+      LocalRepo
+      Chroot

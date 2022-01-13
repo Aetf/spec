@@ -1,7 +1,7 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 test: site.yml deps/.dirstamp
-	ansible-playbook $< --skip-tags start_pulling -vvv
+	ansible-playbook $< --skip-tags start_pulling -v
 
 diff: site.yml deps/.dirstamp
 	env ANSIBLE_DISPLAY_OK_HOSTS=no ANSIBLE_DISPLAY_SKIPPED_HOSTS=no ansible-playbook $< --skip-tags start_pulling --check --diff

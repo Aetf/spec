@@ -18,6 +18,7 @@ system_fonts:
   - adobe-source-code-pro-fonts
   - ttf-hack
 
+# only basic packages should go here
 basic_packages:
   - rsync
   - cmake
@@ -26,5 +27,7 @@ basic_packages:
   - atool
   # for pacdiff
   - pacman-contrib
+  # for chroot makepkg
+  - devtools
   # better xdg-utils
   - handlr-bin
